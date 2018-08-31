@@ -8,7 +8,7 @@ A semi-complete GraphQL wrapper for the Letterboxd.com API. A work in progress.
 
 ## Setup
 
-- Declare your API Key/Secre as environment variables, e.g. in your `bash_profile`:
+- Declare your API Key/Secret as environment variables, e.g. in your `~/.bash_profile`:
 
 ```
 export LETTERBOXD_API_KEY="MY_KEY"
@@ -18,7 +18,7 @@ export LETTERBOXD_API_SECRET="MY_SECRET"
 - Clone this repo
 - Run `npm install`
 - Run `node index.js`
-- Open the playground at `http://localhost:4000` to browse the schema and perform queries
+- Open your browser to `http://localhost:4000` to browse the schema and perform queries in the playground
 
 ## More Info
 - [Letterboxd API Docs](http://api-docs.letterboxd.com)
