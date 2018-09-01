@@ -72,6 +72,8 @@ type Query {
   list(id: ID!): List
 
   listStatistics(list: ID!): ListStatistics
+
+  listComments(list: ID!): [ListComment!]!
   
   relationshipToList(accessToken: String!, list: ID!): ListRelationship
   
@@ -103,6 +105,8 @@ type Query {
   logEntry(id: ID!): LogEntry
 
   reviewStatistics(logEntry: ID!): ReviewStatistics
+
+  reviewComments(logEntry: ID!): [ReviewComment!]!
   
   relationshipToReview(accessToken: String!, logEntry: ID!): ReviewRelationship
 
@@ -659,6 +663,60 @@ enum LogEntriesWhere {
 
 enum LogEntriesFilter {
   NoDuplicateMembers
+}
+
+# Comments
+
+interface Comment {
+  id: ID!
+  type: CommentType!
+  comment: String
+  commentLbml: String
+  deleted: Boolean!
+  blocked: Boolean!
+  blockedByOwner: Boolean!
+  removedByAdmin: Boolean!
+  member: Member!
+  whenCreated: String!
+  whenUpdated: String
+  editableWindowExpiresIn: Int
+}
+
+type ListComment implements Comment {
+  id: ID!
+  type: CommentType!
+  list: ListIdentifier!
+  comment: String
+  commentLbml: String
+  deleted: Boolean!
+  blocked: Boolean!
+  blockedByOwner: Boolean!
+  removedByAdmin: Boolean!
+  member: Member!
+  whenCreated: String!
+  whenUpdated: String
+  editableWindowExpiresIn: Int
+}
+
+type ReviewComment implements Comment {
+  id: ID!
+  type: CommentType!
+  review: ReviewIdentifier!
+  comment: String
+  commentLbml: String
+  deleted: Boolean!
+  blocked: Boolean!
+  blockedByOwner: Boolean!
+  removedByAdmin: Boolean!
+  member: Member!
+  whenCreated: String!
+  whenUpdated: String
+  editableWindowExpiresIn: Int
+}
+
+enum CommentType {
+  ListComment
+  ReviewComment
 }
 
 # Contributors

@@ -183,6 +183,8 @@ const resolvers = {
 
     listStatistics: (root, args) => request('GET', `list/${args.list}/statistics`).then(res => res.json()),
 
+    listComments: (root, args) => request('GET', `list/${args.list}/comments`).then(res => res.json()).then(json => json.items),
+
     relationshipToList: (root, args) => request('GET', `list/${args.list}/me`, null, args.accessToken).then(res => res.json()),
 
     logEntries: (root, args) => {
@@ -198,6 +200,8 @@ const resolvers = {
     logEntry: (root, args) => request('GET', `log-entry/${args.id}`).then(res => res.json()),
 
     reviewStatistics: (root, args) => request('GET', `log-entry/${args.logEntry}/statistics`).then(res => res.json()),
+
+    reviewComments: (root, args) => request('GET', `log-entry/${args.logEntry}/comments`).then(res => res.json()).then(json => json.items),
 
     relationshipToReview: (root, args) => request('GET', `log-entry/${args.logEntry}/me`, null, args.accessToken).then(res => res.json()),
 
@@ -271,6 +275,11 @@ const resolvers = {
   },
 
   SearchItem: {
+    __resolveType(obj) {
+      return obj.type;
+    },
+  },
+  Comment: {
     __resolveType(obj) {
       return obj.type;
     },
