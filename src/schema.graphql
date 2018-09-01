@@ -106,7 +106,13 @@ type Query {
   
   relationshipToReview(accessToken: String!, logEntry: ID!): ReviewRelationship
 
+  # Auth
+
   generateToken(username: String!, password: String!):  AccessToken
+
+  usernameCheck(username: String!): UsernameCheckResult
+
+  # Members
 
   me(accessToken: String!): MemberAccount
   
@@ -452,6 +458,14 @@ type AccessToken {
   token_type: String!
   refresh_token: String!
   expires_in: Int!
+}
+
+enum UsernameCheckResult {
+  Available
+  NotAvailable
+  TooShort
+  TooLong
+  Invalid
 }
 
 type MemberAccount {

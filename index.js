@@ -117,6 +117,8 @@ const fetchFromDetailIfContributorSummary = (obj, args, context, info) => {
   return obj[info.fieldName];
 };
 
+// Resolvers
+
 const resolvers = {
   Query: {
     films: (root, args) => {
@@ -209,6 +211,17 @@ const resolvers = {
       const body = queryString.stringify(params);
 
       return formRequest('POST', 'auth/token', body).then(res => res.json());
+    },
+
+    usernameCheck: (root, args) => {
+      let url = 'auth/username-check';
+
+      const query = queryString.stringify(args);
+      if (query) {
+        url += `?${query}`;
+      }
+
+      return request('GET', url).then(res => res.json()).then(json => json.result);
     },
 
     me: (root, args) => request('GET', 'me', null, args.accessToken).then(res => res.json()),
@@ -321,6 +334,8 @@ const resolvers = {
     links: fetchFromDetailIfContributorSummary,
   },
 };
+
+// Server
 
 const typeDefs = gql`${fs.readFileSync(__dirname.concat('/src/schema.graphql'), 'utf8')}`;
 
