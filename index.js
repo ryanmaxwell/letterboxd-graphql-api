@@ -10,6 +10,7 @@ const {
   LETTERBOXD_API_SECRET,
 } = process.env;
 
+// base URL including version, excluding trailing slash
 const API_BASE_URL = 'https://api.letterboxd.com/api/v0';
 
 // Requests
@@ -244,6 +245,10 @@ const resolvers = {
     member: (root, args) => request('GET', `member/${args.id}`).then(res => res.json()),
 
     memberStatistics: (root, args) => request('GET', `member/${args.member}/statistics`).then(res => res.json()),
+
+    memberLogEntryTags: (root, args) => request('GET', `member/${args.member}/log-entry-tags`).then(res => res.json()).then(json => json.items),
+
+    memberListTags: (root, args) => request('GET', `member/${args.member}/list-tags-2`).then(res => res.json()).then(json => json.items),
 
     watchlist: (root, args) => {
       let url = `member/${args.member}/watchlist`;

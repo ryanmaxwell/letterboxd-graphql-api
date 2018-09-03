@@ -40,6 +40,7 @@ type Query {
     sort: FilmsSort
     ): FilmCollection
   
+  # Private endpoint restricted to Letterboxd and approved partners only.
   # Access token optional, will be personalized to user's preferred stores if provided
   filmAvailability(accessToken: String, film: ID!): [FilmAvailability!]
   
@@ -51,7 +52,7 @@ type Query {
     sort: MembersSort
     perPage: Int
     cursor: ID
-    ): [MemberFilmRelationship!]!
+    ): [MemberFilmRelationship!]
   
   lists(
     film: ID
@@ -73,7 +74,7 @@ type Query {
 
   listStatistics(list: ID!): ListStatistics
 
-  listComments(list: ID!): [ListComment!]!
+  listComments(list: ID!): [ListComment!]
   
   relationshipToList(accessToken: String!, list: ID!): ListRelationship
   
@@ -106,7 +107,7 @@ type Query {
 
   reviewStatistics(logEntry: ID!): ReviewStatistics
 
-  reviewComments(logEntry: ID!): [ReviewComment!]!
+  reviewComments(logEntry: ID!): [ReviewComment!]
   
   relationshipToReview(accessToken: String!, logEntry: ID!): ReviewRelationship
 
@@ -136,6 +137,10 @@ type Query {
 
   memberStatistics(member: ID!): MemberStatistics
 
+  memberLogEntryTags(member: ID!): [MemberTag!]
+
+  memberListTags(member: ID!): [MemberTag!]
+
   watchlist(member: ID!
     genre: ID
     decade: Int
@@ -149,7 +154,7 @@ type Query {
     where: [FilmsWhere!]
     sort: WatchlistSort
     perPage: Int
-    cursor: ID): [Film!]!
+    cursor: ID): [Film!]
   
   contributor(id: ID!): Contributor
   
@@ -170,7 +175,7 @@ type Query {
     sort: FilmContributionsSort
     perPage: Int
     cursor: ID
-    ): [FilmContribution!]!
+    ): [FilmContribution!]
   
   genres: [Genre!]!
   
@@ -550,6 +555,20 @@ type MemberStatisticsCounts {
   following: Int!
   listTags: Int!
   filmTags: Int!
+}
+
+type MemberTag {
+  code: String!
+  displayTag: String!
+  counts: MemberTagCounts!
+}
+
+type MemberTagCounts {
+  films: Int!
+  logEntries: Int!
+  diaryEntries: Int!
+  reviews: Int!
+  lists: Int!
 }
 
 enum MemberStatus {
