@@ -135,6 +135,21 @@ type Query {
   member(id: ID!): Member
 
   memberStatistics(member: ID!): MemberStatistics
+
+  watchlist(member: ID!
+    genre: ID
+    decade: Int
+    year: Int
+    service: ID
+    memberRelationship: FilmMemberRelationship
+    includeFriends: IncludeFriends
+    tagCode: String
+    tagger: String
+    includeTaggerFriends: IncludeFriends
+    where: [FilmsWhere!]
+    sort: WatchlistSort
+    perPage: Int
+    cursor: ID): [Film!]!
   
   contributor(id: ID!): Contributor
   
@@ -570,6 +585,27 @@ enum MembersSort {
 enum MemberRelationship {
   IsFollowing
   IsFollowedBy
+}
+
+enum WatchlistSort {
+  Added
+  FilmName
+  OwnerRatingHighToLow
+  OwnerRatingLowToHigh
+  AuthenticatedMemberRatingHighToLow
+  AuthenticatedMemberRatingLowToHigh
+  MemberRatingHighToLow
+  MemberRatingLowToHigh
+  AverageRatingHighToLow
+  AverageRatingLowToHigh
+  ReleaseDateLatestFirst
+  ReleaseDateEarliestFirst
+  FilmDurationShortestFirst
+  FilmDurationLongestFirst
+  FilmPopularity
+  FilmPopularityThisWeek
+  FilmPopularityThisMonth
+  FilmPopularityThisYear
 }
 
 # Log Entries

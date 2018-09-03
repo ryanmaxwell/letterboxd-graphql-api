@@ -245,6 +245,20 @@ const resolvers = {
 
     memberStatistics: (root, args) => request('GET', `member/${args.member}/statistics`).then(res => res.json()),
 
+    watchlist: (root, args) => {
+      let url = `member/${args.member}/watchlist`;
+
+      const queryArgs = args;
+      delete queryArgs.member;
+
+      const query = queryString.stringify(queryArgs);
+      if (query) {
+        url += `?${query}`;
+      }
+
+      return request('GET', url).then(res => res.json()).then(json => json.items);
+    },
+
     genres: () => request('GET', 'films/genres').then(res => res.json()).then(json => json.items),
 
     services: () => request('GET', 'films/film-services').then(res => res.json()).then(json => json.items),
