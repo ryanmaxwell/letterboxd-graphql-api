@@ -398,7 +398,7 @@ const typeDefs = gql`
   ${fs.readFileSync(__dirname.concat('/src/schema/list.graphql'), 'utf8')}
   ${fs.readFileSync(__dirname.concat('/src/schema/logEntry.graphql'), 'utf8')}
   ${fs.readFileSync(__dirname.concat('/src/schema/member.graphql'), 'utf8')}
-  ${fs.readFileSync(__dirname.concat('/src/schema/queries.graphql'), 'utf8')}
+  ${fs.readFileSync(__dirname.concat('/src/schema/query.graphql'), 'utf8')}
   ${fs.readFileSync(__dirname.concat('/src/schema/search.graphql'), 'utf8')}
 `;
 
