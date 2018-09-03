@@ -1,0 +1,100 @@
+# Lists
+
+type List {
+  id: ID!
+  name: String!
+  filmCount: Int!
+  published: Boolean!
+  ranked: Boolean!
+  hasEntriesWithNotes: Boolean!
+  description: String
+  descriptionLbml: String
+  owner: Member!
+  clonedFrom: List
+  previewEntries: [ListEntrySummary!]!
+  tags: [Tag!]!
+  links: [Link!]!
+  canShareOn: [SharingService!]
+  sharedOn: [SharingService!]
+  whenCreated: String!
+  whenPublished: String
+}
+
+type ListRelationship {
+  liked: Boolean!
+  subscribed: Boolean!
+  subscriptionState: CommentSubscriptionState!
+  commentThreadState: CommentThreadState!
+}
+
+type ListEntrySummary {
+  rank: Int
+  film: Film!
+}
+
+type ListEntry {
+  rank: Int
+  notes: String
+  notesLbml: String
+  containsSpoilers: Boolean
+  film: Film!
+}
+
+type ListStatistics {
+  list: ListIdentifier!
+  counts: ListStatisticsCounts!
+}
+
+type ListStatisticsCounts {
+  comments: Int!
+  likes: Int!
+}
+
+type ListIdentifier {
+  id: ID!
+}
+
+enum CommentSubscriptionState {
+  Subscribed
+  NotSubscribed
+  Unsubscribed
+}
+
+enum CommentThreadState {
+  CanComment
+  Banned
+  Blocked
+  NotCommentable
+}
+
+enum ListsSort {
+  Date
+  WhenPublishedLatestFirst
+  WhenPublishedEarliestFirst
+  WhenCreatedLatestFirst
+  WhenCreatedEarliestFirst
+  ListName
+  ListPopularity
+  ListPopularityThisWeek
+  ListPopularityThisMonth
+  ListPopularityThisYear
+  ListPopularityWithFriends
+  ListPopularityWithFriendsThisWeek
+  ListPopularityWithFriendsThisMonth
+  ListPopularityWithFriendsThisYear
+}
+
+enum ListMemberRelationship {
+  Owner
+  Liked
+}
+
+enum ListsWhere {
+  Clean
+  Published
+  NotPublished
+}
+
+enum ListsFilter {
+  NoDuplicateMembers
+}

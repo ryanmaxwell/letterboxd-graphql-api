@@ -1,0 +1,150 @@
+# Me
+
+type AccessToken {
+  access_token: String!
+  token_type: String!
+  refresh_token: String!
+  expires_in: Int!
+}
+
+enum UsernameCheckResult {
+  Available
+  NotAvailable
+  TooShort
+  TooLong
+  Invalid
+}
+
+type MemberAccount {
+  emailAddress: String!
+  emailAddressValidated: Boolean!
+  privateAccount: Boolean!
+  # TODO more properties
+
+  member: Member!
+}
+
+# Members
+
+type Member {
+  id: ID!
+  username: String!
+  givenName: String
+  familyName: String
+  shortName: String!
+  displayName: String!
+  memberStatus: MemberStatus!
+  avatar: Image
+  backdrop: Image
+  pronoun: Pronoun
+  bio: String
+  bioLbml: String
+  location: String
+  website: String
+  twitterUsername: String
+  backdropFocalPoint: Float
+  privateWatchlist: Boolean!
+  favoriteFilms: [Film!]!
+  pinnedReviews: [LogEntry!]
+  links: [Link]
+}
+
+type MemberStatistics {
+  member: MemberIdentifier!
+  counts: MemberStatisticsCounts!
+  ratingsHistogram: [RatingsHistogramBar!]
+  yearsInReview: [Int!]!
+}
+
+type MemberIdentifier {
+  id: ID!
+}
+
+type MemberStatisticsCounts {
+  filmLikes: Int!
+  listLikes: Int!
+  reviewLikes: Int!
+  watches: Int!
+  ratings: Int!
+  reviews: Int!
+  diaryEntries: Int!
+  diaryEntriesThisYear: Int!
+  filmsInDiaryThisYear: Int!
+  watchlist: Int!
+  lists: Int!
+  unpublishedLists: Int!
+  followers: Int!
+  following: Int!
+  listTags: Int!
+  filmTags: Int!
+}
+
+type MemberTag {
+  code: String!
+  displayTag: String!
+  counts: MemberTagCounts!
+}
+
+type MemberTagCounts {
+  films: Int!
+  logEntries: Int!
+  diaryEntries: Int!
+  reviews: Int!
+  lists: Int!
+}
+
+enum MemberStatus {
+  Crew
+  Patron
+  Pro
+  Member
+}
+
+type Pronoun {
+  id: ID!
+  label: String!
+  subjectPronoun: String!
+  objectPronoun: String!
+  possessiveAdjective: String!
+  possessivePronoun: String!
+  reflexive: String!
+}
+
+enum MembersSort {
+  Date
+  Name
+  MemberPopularity
+  MemberPopularityThisWeek
+  MemberPopularityThisMonth
+  MemberPopularityThisYear
+  MemberPopularityWithFriends
+  MemberPopularityWithFriendsThisWeek
+  MemberPopularityWithFriendsThisMonth
+  MemberPopularityWithFriendsThisYear
+}
+
+enum MemberRelationship {
+  IsFollowing
+  IsFollowedBy
+}
+
+enum WatchlistSort {
+  Added
+  FilmName
+  OwnerRatingHighToLow
+  OwnerRatingLowToHigh
+  AuthenticatedMemberRatingHighToLow
+  AuthenticatedMemberRatingLowToHigh
+  MemberRatingHighToLow
+  MemberRatingLowToHigh
+  AverageRatingHighToLow
+  AverageRatingLowToHigh
+  ReleaseDateLatestFirst
+  ReleaseDateEarliestFirst
+  FilmDurationShortestFirst
+  FilmDurationLongestFirst
+  FilmPopularity
+  FilmPopularityThisWeek
+  FilmPopularityThisMonth
+  FilmPopularityThisYear
+}

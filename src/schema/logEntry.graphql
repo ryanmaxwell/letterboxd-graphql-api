@@ -1,0 +1,124 @@
+# Log Entries
+
+type LogEntry {
+  id: ID!
+  name: String!
+  owner: Member!
+  film: Film!
+  diaryDetails: DiaryDetails
+  review: Review
+  rating: Float
+  like: Boolean!
+  commentable: Boolean!
+  tags: [Tag!]
+  links: [Link!]
+  whenCreated: String!
+  whenUpdated: String!
+}
+
+type DiaryDetails {
+  diaryDate: String!
+  rewatch: Boolean!
+}
+
+type Review {
+  lbml: String!
+  text: String!
+  containsSpoilers: Boolean!
+  canShareOn: [SharingService!]
+  sharedOn: [SharingService!]
+  whenReviewed: String!
+}
+
+type ReviewRelationship {
+  liked: Boolean!
+  subscribed: Boolean!
+  subscriptionState: CommentSubscriptionState!
+  commentThreadState: CommentThreadState!
+}
+
+type ReviewStatistics {
+  logEntry: ReviewIdentifier!
+  counts: ReviewStatisticsCounts!
+}
+
+type ReviewIdentifier {
+  id: ID!
+}
+
+type ReviewStatisticsCounts {
+  comments: Int!
+  likes: Int!
+}
+
+enum SharingService {
+  Facebook
+}
+
+type Tag {
+  code: String!
+  displayTag: String!
+}
+
+enum LogEntryMemberRelationship {
+  Ignore
+  Owner
+  Liked
+}
+
+enum LogEntriesSort {
+  WhenAdded
+  Date
+  EntryRatingHighToLow
+  EntryRatingLowToHigh
+  RatingHighToLow
+  RatingLowToHigh
+  AuthenticatedMemberRatingHighToLow
+  AuthenticatedMemberRatingLowToHigh
+  MemberRatingHighToLow
+  MemberRatingLowToHigh
+  AverageRatingHighToLow
+  AverageRatingLowToHigh
+  ReleaseDateLatestFirst
+  ReleaseDateEarliestFirst
+  FilmName
+  FilmDurationShortestFirst
+  FilmDurationLongestFirst
+  ReviewPopularity
+  ReviewPopularityThisWeek
+  ReviewPopularityThisMonth
+  ReviewPopularityThisYear
+  ReviewPopularityWithFriends
+  ReviewPopularityWithFriendsThisWeek
+  ReviewPopularityWithFriendsThisMonth
+  ReviewPopularityWithFriendsThisYear
+  FilmPopularity
+  FilmPopularityThisWeek
+  FilmPopularityThisMonth
+  FilmPopularityThisYear
+  FilmPopularityWithFriends
+  FilmPopularityWithFriendsThisWeek
+  FilmPopularityWithFriendsThisMonth
+  FilmPopularityWithFriendsThisYear
+}
+
+enum LogEntriesWhere {
+  HasDiaryDate
+  HasReview
+  Clean
+  NoSpoilers
+  Released
+  NotReleased
+  FeatureLength
+  NotFeatureLength
+  InWatchlist
+  NotInWatchlist
+  Watched
+  NotWatched
+  Rated
+  NotRated
+}
+
+enum LogEntriesFilter {
+  NoDuplicateMembers
+}

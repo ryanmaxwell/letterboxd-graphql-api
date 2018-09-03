@@ -1,0 +1,186 @@
+# Films
+
+type Film {
+  id: ID!
+  name: String!
+  originalName: String
+  alternativeNames: [String!]!
+  releaseYear: Int
+  filmCollectionId: ID
+  backdropFocalPoint: Float
+  genres: [Genre!]!
+  directors: [Contributor!]!
+  contributions(type: ContributionType): [FilmContributions!]!
+  backdrop: Image
+  poster: Image
+  trailer: FilmTrailer
+  links: [Link!]!
+}
+
+type Genre {
+  id: ID!
+  name: String!
+}
+
+type Service {
+  id: ID!
+  name: String!
+}
+
+type FilmTrailer {
+  id: ID!
+  url: String!
+}
+
+type Image {
+  sizes: [ImageSize!]!
+}
+
+type ImageSize {
+  width: Int!
+  height: Int!
+  url: String!
+}
+
+type Link {
+  type: LinkType!
+  id: ID!
+  url: String!
+}
+
+enum LinkType {
+  letterboxd
+  tmdb
+  imdb
+  gwi
+}
+
+type FilmContributions {
+  type: ContributionType
+  contributors: [Contributor!]!
+}
+
+type MemberFilmRelationship {
+  member: Member!
+  relationship: FilmRelationship!
+}
+
+type FilmRelationship {
+  watched: Boolean
+  whenWatched: String
+  liked: Boolean
+  whenLiked: String
+  favorited: Boolean
+  inWatchlist: Boolean
+  whenAddedToWatchlist: String
+  whenCompletedInWatchlist: String
+  rating: Float
+  reviews: [ID!]!
+  diaryEntries: [ID!]!
+}
+
+type FilmStatistics {
+  film: FilmIdentifier!
+  counts: FilmStatisticsCounts!
+  rating: Float
+  ratingsHistogram: [RatingsHistogramBar!]!
+}
+
+type FilmIdentifier {
+  id: ID!
+}
+
+type FilmStatisticsCounts {
+  watches: Int!
+  likes: Int!
+  ratings: Int!
+  fans: Int!
+  lists: Int!
+  reviews: Int!
+}
+
+type RatingsHistogramBar {
+  rating: Float!
+  normalizedWeight: Float!
+  count: Int!
+}
+
+enum FilmsSort {
+  FilmName
+  ReleaseDateLatestFirst
+  ReleaseDateEarliestFirst
+  AuthenticatedMemberRatingHighToLow
+  AuthenticatedMemberRatingLowToHigh
+  MemberRatingHighToLow
+  MemberRatingLowToHigh
+  AverageRatingHighToLow
+  AverageRatingLowToHigh
+  RatingHighToLow
+  RatingLowToHigh
+  FilmDurationShortestFirst
+  FilmDurationLongestFirst
+  FilmPopularity
+  FilmPopularityThisWeek
+  FilmPopularityThisMonth
+  FilmPopularityThisYear
+  FilmPopularityWithFriends
+  FilmPopularityWithFriendsThisWeek
+  FilmPopularityWithFriendsThisMonth
+  FilmPopularityWithFriendsThisYear
+}
+
+enum FilmsWhere {
+  Released
+  NotReleased
+  InWatchlist
+  NotInWatchlist
+  WatchedFromWatchlist
+  Watched
+  NotWatched
+  FeatureLength
+  NotFeatureLength
+}
+
+enum FilmMemberRelationship {
+  Ignore
+  Watched
+  NotWatched
+  Liked
+  NotLiked
+  InWatchlist
+  NotInWatchlist
+  Favorited
+}
+
+enum IncludeFriends {
+  None
+  All
+  Only
+}
+
+# Film Collections
+
+type FilmCollection {
+  id: ID!
+  name: String!
+  films: [Film!]!
+  links: [Link!]!
+}
+
+# Film Availability
+
+type FilmAvailability {
+  id: ID
+  service: FilmAvailabilityService!
+  displayName: String!
+  country: String!
+  url: String!
+}
+
+enum FilmAvailabilityService {
+  Amazon
+  AmazonVideo
+  AmazonPrime
+  iTunes
+  Netflix
+}

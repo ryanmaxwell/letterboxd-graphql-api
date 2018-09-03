@@ -1,0 +1,60 @@
+# Contributors
+
+type Contributor {
+  id: ID!
+  name: String!
+  characterName: String
+  statistics: ContributorStatistics!
+  links: [Link!]!
+}
+
+type ContributorStatistics {
+  contributions: [ContributionStatistics!]!
+}
+
+type ContributionStatistics {
+  type: ContributionType!
+  filmCount: Int!
+}
+
+enum ContributionType {
+  Actor
+  Studio
+  Director
+  Producer
+  Writer
+  Editor
+  Cinematography
+  ArtDirection
+  VisualEffects
+  Composer
+  Sound
+  Costumes
+  MakeUp
+}
+
+type FilmContribution {
+  type: ContributionType!
+  film: Film!
+  characterName: String
+}
+
+enum FilmContributionsSort {
+  FilmName
+  ReleaseDateLatestFirst
+  ReleaseDateEarliestFirst
+  AuthenticatedMemberRatingHighToLow
+  AuthenticatedMemberRatingLowToHigh
+  MemberRatingHighToLow
+  MemberRatingLowToHigh
+  AverageRatingHighToLow
+  AverageRatingLowToHigh
+  RatingHighToLow
+  RatingLowToHigh
+  FilmDurationShortestFirst
+  FilmDurationLongestFirst
+  FilmPopularity
+  FilmPopularityThisWeek
+  FilmPopularityThisMonth
+  FilmPopularityThisYear
+}

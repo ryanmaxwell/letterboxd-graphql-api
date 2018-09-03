@@ -1,0 +1,53 @@
+# Comment
+
+interface Comment {
+  id: ID!
+  type: CommentType!
+  comment: String
+  commentLbml: String
+  deleted: Boolean!
+  blocked: Boolean!
+  blockedByOwner: Boolean!
+  removedByAdmin: Boolean!
+  member: Member!
+  whenCreated: String!
+  whenUpdated: String
+  editableWindowExpiresIn: Int
+}
+
+type ListComment implements Comment {
+  id: ID!
+  type: CommentType!
+  list: ListIdentifier!
+  comment: String
+  commentLbml: String
+  deleted: Boolean!
+  blocked: Boolean!
+  blockedByOwner: Boolean!
+  removedByAdmin: Boolean!
+  member: Member!
+  whenCreated: String!
+  whenUpdated: String
+  editableWindowExpiresIn: Int
+}
+
+type ReviewComment implements Comment {
+  id: ID!
+  type: CommentType!
+  review: ReviewIdentifier!
+  comment: String
+  commentLbml: String
+  deleted: Boolean!
+  blocked: Boolean!
+  blockedByOwner: Boolean!
+  removedByAdmin: Boolean!
+  member: Member!
+  whenCreated: String!
+  whenUpdated: String
+  editableWindowExpiresIn: Int
+}
+
+enum CommentType {
+  ListComment
+  ReviewComment
+}
