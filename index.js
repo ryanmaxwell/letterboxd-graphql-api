@@ -85,37 +85,37 @@ const formRequest = (method, path, body) => {
 
 // Utility
 
-const isFilmSummary = obj => obj.trailer === undefined;
-const isListSummary = obj => obj.links === undefined;
-const isMemberSummary = obj => obj.links === undefined;
-const isContributorSummary = obj => obj.links === undefined;
+const isFilmSummary = film => film.trailer === undefined;
+const isListSummary = list => list.links === undefined;
+const isMemberSummary = member => member.links === undefined;
+const isContributorSummary = contributor => contributor.links === undefined;
 
-const fetchFromDetailIfFilmSummary = (obj, args, context, info) => {
-  if (isFilmSummary(obj)) {
-    return request('GET', `film/${obj.id}`).then(res => res.json()).then(json => json[info.fieldName]);
+const fetchFromDetailIfFilmSummary = (film, args, context, info) => {
+  if (isFilmSummary(film)) {
+    return request('GET', `film/${film.id}`).then(res => res.json()).then(json => json[info.fieldName]);
   }
-  return obj[info.fieldName];
+  return film[info.fieldName];
 };
 
-const fetchFromDetailIfListSummary = (obj, args, context, info) => {
-  if (isListSummary(obj)) {
-    return request('GET', `list/${obj.id}`).then(res => res.json()).then(json => json[info.fieldName]);
+const fetchFromDetailIfListSummary = (list, args, context, info) => {
+  if (isListSummary(list)) {
+    return request('GET', `list/${list.id}`).then(res => res.json()).then(json => json[info.fieldName]);
   }
-  return obj[info.fieldName];
+  return list[info.fieldName];
 };
 
-const fetchFromDetailIfMemberSummary = (obj, args, context, info) => {
-  if (isMemberSummary(obj)) {
-    return request('GET', `member/${obj.id}`).then(res => res.json()).then(json => json[info.fieldName]);
+const fetchFromDetailIfMemberSummary = (member, args, context, info) => {
+  if (isMemberSummary(member)) {
+    return request('GET', `member/${member.id}`).then(res => res.json()).then(json => json[info.fieldName]);
   }
-  return obj[info.fieldName];
+  return member[info.fieldName];
 };
 
-const fetchFromDetailIfContributorSummary = (obj, args, context, info) => {
-  if (isContributorSummary(obj)) {
-    return request('GET', `contributor/${obj.id}`).then(res => res.json()).then(json => json[info.fieldName]);
+const fetchFromDetailIfContributorSummary = (contributor, args, context, info) => {
+  if (isContributorSummary(contributor)) {
+    return request('GET', `contributor/${contributor.id}`).then(res => res.json()).then(json => json[info.fieldName]);
   }
-  return obj[info.fieldName];
+  return contributor[info.fieldName];
 };
 
 // Resolvers
@@ -297,23 +297,23 @@ const resolvers = {
   },
 
   SearchItem: {
-    __resolveType(obj) {
-      return obj.type;
+    __resolveType(searchItem) {
+      return searchItem.type;
     },
   },
   Comment: {
-    __resolveType(obj) {
-      return obj.type;
+    __resolveType(comment) {
+      return comment.type;
     },
   },
   LogEntry: {
-    tags: obj => obj.tags2,
+    tags: logEntry => logEntry.tags2,
   },
   Film: {
-    alternativeNames: obj => (obj.alternativeNames === undefined ? [] : obj.alternativeNames),
+    alternativeNames: film => (film.alternativeNames === undefined ? [] : film.alternativeNames),
     backdropFocalPoint: fetchFromDetailIfFilmSummary,
-    contributions: (obj, args, context, info) => {
-      const result = fetchFromDetailIfFilmSummary(obj, args, context, info);
+    contributions: (film, args, context, info) => {
+      const result = fetchFromDetailIfFilmSummary(film, args, context, info);
       if (args.type) {
         return result.then(contributions => contributions.filter(contribution => contribution.type === args.type));
       }
@@ -322,11 +322,11 @@ const resolvers = {
     genres: fetchFromDetailIfFilmSummary,
     trailer: fetchFromDetailIfFilmSummary,
     backdrop: fetchFromDetailIfFilmSummary,
-    directors: (obj) => {
-      if (isFilmSummary(obj)) {
-        return obj.directors;
+    directors: (film) => {
+      if (isFilmSummary(film)) {
+        return film.directors;
       }
-      return obj.contributions.filter(contribution => contribution.type === 'Director').contributors;
+      return film.contributions.filter(contribution => contribution.type === 'Director').contributors;
     },
   },
   Member: {
@@ -342,11 +342,11 @@ const resolvers = {
   },
   List: {
     hasEntriesWithNotes: fetchFromDetailIfListSummary,
-    tags: (obj) => {
-      if (isListSummary(obj)) {
-        return request('GET', `list/${obj.id}`).then(res => res.json()).then(json => json.tags2);
+    tags: (list) => {
+      if (isListSummary(list)) {
+        return request('GET', `list/${list.id}`).then(res => res.json()).then(json => json.tags2);
       }
-      return obj.tags2;
+      return list.tags2;
     },
     links: fetchFromDetailIfListSummary,
     canShareOn: fetchFromDetailIfListSummary,
@@ -355,9 +355,9 @@ const resolvers = {
     whenPublished: fetchFromDetailIfListSummary,
   },
   Contributor: {
-    characterName: (obj) => {
-      if (isContributorSummary(obj)) {
-        return obj.characterName;
+    characterName: (contributor) => {
+      if (isContributorSummary(contributor)) {
+        return contributor.characterName;
       }
       return null;
     },
