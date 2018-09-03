@@ -240,7 +240,10 @@ const resolvers = {
 
       return request('GET', url).then(res => res.json()).then(json => json.items);
     },
+
     member: (root, args) => request('GET', `member/${args.id}`).then(res => res.json()),
+
+    memberStatistics: (root, args) => request('GET', `member/${args.member}/statistics`).then(res => res.json()),
 
     genres: () => request('GET', 'films/genres').then(res => res.json()).then(json => json.items),
 

@@ -133,6 +133,8 @@ type Query {
     ): [Member!]!
   
   member(id: ID!): Member
+
+  memberStatistics(member: ID!): MemberStatistics
   
   contributor(id: ID!): Contributor
   
@@ -503,6 +505,36 @@ type Member {
   favoriteFilms: [Film!]!
   pinnedReviews: [LogEntry!]
   links: [Link]
+}
+
+type MemberStatistics {
+  member: MemberIdentifier!
+  counts: MemberStatisticsCounts!
+  ratingsHistogram: [RatingsHistogramBar!]
+  yearsInReview: [Int!]!
+}
+
+type MemberIdentifier {
+  id: ID!
+}
+
+type MemberStatisticsCounts {
+  filmLikes: Int!
+  listLikes: Int!
+  reviewLikes: Int!
+  watches: Int!
+  ratings: Int!
+  reviews: Int!
+  diaryEntries: Int!
+  diaryEntriesThisYear: Int!
+  filmsInDiaryThisYear: Int!
+  watchlist: Int!
+  lists: Int!
+  unpublishedLists: Int!
+  followers: Int!
+  following: Int!
+  listTags: Int!
+  filmTags: Int!
 }
 
 enum MemberStatus {
