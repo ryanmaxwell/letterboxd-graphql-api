@@ -12,6 +12,7 @@
   "dependencies": {
     "apollo-server": "^2.0.0",
     "crypto": "^1.0.1",
+    "dataloader": "^1.4.0",
     "graphql": "^0.13.2",
     "node-fetch": "^2.2.0",
     "query-string": "^6.1.0",

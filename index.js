@@ -1,4 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server');
+const DataLoader = require('dataloader');
 const fs = require('fs');
 const fetch = require('node-fetch');
 const crypto = require('crypto');
@@ -83,6 +84,28 @@ const formRequest = (method, path, body) => {
   });
 };
 
+// Data Loaders
+
+const filmLoader = new DataLoader((ids) => {
+  const req = ids.map(id => request('GET', `film/${id}`).then(res => res.json()));
+  return Promise.all(req);
+});
+
+const listLoader = new DataLoader((ids) => {
+  const req = ids.map(id => request('GET', `list/${id}`).then(res => res.json()));
+  return Promise.all(req);
+});
+
+const memberLoader = new DataLoader((ids) => {
+  const req = ids.map(id => request('GET', `member/${id}`).then(res => res.json()));
+  return Promise.all(req);
+});
+
+const contributorLoader = new DataLoader((ids) => {
+  const req = ids.map(id => request('GET', `contributor/${id}`).then(res => res.json()));
+  return Promise.all(req);
+});
+
 // Utility
 
 const isFilmSummary = film => film.trailer === undefined;
@@ -92,28 +115,28 @@ const isContributorSummary = contributor => contributor.links === undefined;
 
 const fetchFromDetailIfFilmSummary = (film, args, context, info) => {
   if (isFilmSummary(film)) {
-    return request('GET', `film/${film.id}`).then(res => res.json()).then(json => json[info.fieldName]);
+    return context.filmLoader.load(film.id).then(json => json[info.fieldName]);
   }
   return film[info.fieldName];
 };
 
 const fetchFromDetailIfListSummary = (list, args, context, info) => {
   if (isListSummary(list)) {
-    return request('GET', `list/${list.id}`).then(res => res.json()).then(json => json[info.fieldName]);
+    return context.listLoader.load(list.id).then(json => json[info.fieldName]);
   }
   return list[info.fieldName];
 };
 
 const fetchFromDetailIfMemberSummary = (member, args, context, info) => {
   if (isMemberSummary(member)) {
-    return request('GET', `member/${member.id}`).then(res => res.json()).then(json => json[info.fieldName]);
+    return context.memberLoader.load(member.id).then(json => json[info.fieldName]);
   }
   return member[info.fieldName];
 };
 
 const fetchFromDetailIfContributorSummary = (contributor, args, context, info) => {
   if (isContributorSummary(contributor)) {
-    return request('GET', `contributor/${contributor.id}`).then(res => res.json()).then(json => json[info.fieldName]);
+    return context.contributorLoader.load(contributor.id).then(json => json[info.fieldName]);
   }
   return contributor[info.fieldName];
 };
@@ -133,7 +156,7 @@ const resolvers = {
       return request('GET', url).then(res => res.json()).then(json => json.items);
     },
 
-    film: (root, args) => request('GET', `film/${args.id}`).then(res => res.json()),
+    film: (root, args, context) => context.filmLoader.load(args.id),
 
     filmStatistics: (root, args) => request('GET', `film/${args.film}/statistics`).then(res => res.json()),
 
@@ -180,7 +203,7 @@ const resolvers = {
       return request('GET', url).then(res => res.json()).then(json => json.items);
     },
 
-    list: (root, args) => request('GET', `list/${args.id}`).then(res => res.json()),
+    list: (root, args, context) => context.listLoader.load(args.id),
 
     listStatistics: (root, args) => request('GET', `list/${args.list}/statistics`).then(res => res.json()),
 
@@ -242,7 +265,7 @@ const resolvers = {
       return request('GET', url).then(res => res.json()).then(json => json.items);
     },
 
-    member: (root, args) => request('GET', `member/${args.id}`).then(res => res.json()),
+    member: (root, args, context) => context.memberLoader.load(args.id),
 
     memberStatistics: (root, args) => request('GET', `member/${args.member}/statistics`).then(res => res.json()),
 
@@ -268,7 +291,7 @@ const resolvers = {
 
     services: () => request('GET', 'films/film-services').then(res => res.json()).then(json => json.items),
 
-    contributor: (root, args) => request('GET', `contributor/${args.id}`).then(res => res.json()),
+    contributor: (root, args, context) => context.contributorLoader.load(args.id),
 
     contributions: (root, args) => {
       let url = `contributor/${args.contributor}/contributions`;
@@ -368,11 +391,19 @@ const resolvers = {
 
 // Server
 
-const typeDefs = gql`${fs.readFileSync(__dirname.concat('/src/schema.graphql'), 'utf8')}`;
+const typeDefs = gql`
+  ${fs.readFileSync(__dirname.concat('/src/schema.graphql'), 'utf8')}
+`;
 
 const server = new ApolloServer({
   typeDefs,
   resolvers,
+  context: {
+    filmLoader,
+    listLoader,
+    memberLoader,
+    contributorLoader,
+  },
 });
 
 server.listen().then(({ url }) => {
