@@ -16,14 +16,14 @@ type Query {
     sort: FilmsSort
     perPage: Int
     cursor: ID
-    ): [Film!]!
-  
+  ): [Film!]!
+
   film(id: ID!): Film
 
   filmStatistics(film: ID!): FilmStatistics
-  
+
   relationshipToFilm(accessToken: String!, film: ID!): FilmRelationship
-  
+
   filmCollection(
     id: ID!
     genre: ID
@@ -38,12 +38,12 @@ type Query {
     includeTaggerFriends: IncludeFriends
     where: [FilmsWhere!]
     sort: FilmsSort
-    ): FilmCollection
-  
+  ): FilmCollection
+
   # Private endpoint restricted to Letterboxd and approved partners only.
   # Access token optional, will be personalized to user's preferred stores if provided
   filmAvailability(accessToken: String, film: ID!): [FilmAvailability!]
-  
+
   filmMembers(
     film: ID!
     member: ID
@@ -52,8 +52,8 @@ type Query {
     sort: MembersSort
     perPage: Int
     cursor: ID
-    ): [MemberFilmRelationship!]
-  
+  ): [MemberFilmRelationship!]
+
   lists(
     film: ID
     clonedFrom: ID
@@ -68,16 +68,16 @@ type Query {
     sort: ListsSort
     perPage: Int
     cursor: ID
-    ): [List!]!
-  
+  ): [List!]!
+
   list(id: ID!): List
 
   listStatistics(list: ID!): ListStatistics
 
   listComments(list: ID!): [ListComment!]
-  
+
   relationshipToList(accessToken: String!, list: ID!): ListRelationship
-  
+
   logEntries(
     film: ID
     member: ID
@@ -101,26 +101,26 @@ type Query {
     sort: LogEntriesSort
     perPage: Int
     cursor: ID
-    ): [LogEntry!]!
-  
+  ): [LogEntry!]!
+
   logEntry(id: ID!): LogEntry
 
   reviewStatistics(logEntry: ID!): ReviewStatistics
 
   reviewComments(logEntry: ID!): [ReviewComment!]
-  
+
   relationshipToReview(accessToken: String!, logEntry: ID!): ReviewRelationship
 
   # Auth
 
-  generateToken(username: String!, password: String!):  AccessToken
+  generateToken(username: String!, password: String!): AccessToken
 
   usernameCheck(username: String!): UsernameCheckResult
 
   # Members
 
   me(accessToken: String!): MemberAccount
-  
+
   members(
     member: ID
     memberRelationship: MemberRelationship
@@ -131,8 +131,8 @@ type Query {
     sort: MembersSort
     perPage: Int
     cursor: ID
-    ): [Member!]!
-  
+  ): [Member!]!
+
   member(id: ID!): Member
 
   memberStatistics(member: ID!): MemberStatistics
@@ -141,7 +141,8 @@ type Query {
 
   memberListTags(member: ID!): [MemberTag!]
 
-  watchlist(member: ID!
+  watchlist(
+    member: ID!
     genre: ID
     decade: Int
     year: Int
@@ -154,10 +155,11 @@ type Query {
     where: [FilmsWhere!]
     sort: WatchlistSort
     perPage: Int
-    cursor: ID): [Film!]
-  
+    cursor: ID
+  ): [Film!]
+
   contributor(id: ID!): Contributor
-  
+
   contributions(
     contributor: ID!
     type: ContributionType
@@ -175,16 +177,11 @@ type Query {
     sort: FilmContributionsSort
     perPage: Int
     cursor: ID
-    ): [FilmContribution!]
-  
+  ): [FilmContribution!]
+
   genres: [Genre!]!
-  
+
   services: [Service!]!
-  
-  search(
-    input: String!
-    include: [SearchInclude!]
-    perPage: Int
-    cursor: ID
-    ): [SearchItem!]!
+
+  search(input: String!, include: [SearchInclude!], perPage: Int, cursor: ID): [SearchItem!]!
 }

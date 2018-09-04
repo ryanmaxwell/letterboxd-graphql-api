@@ -6,10 +6,7 @@ const crypto = require('crypto');
 const uuid = require('uuid-random');
 const queryString = require('query-string');
 
-const {
-  LETTERBOXD_API_KEY,
-  LETTERBOXD_API_SECRET,
-} = process.env;
+const { LETTERBOXD_API_KEY, LETTERBOXD_API_SECRET } = process.env;
 
 // base URL including version, excluding trailing slash
 const API_BASE_URL = 'https://api.letterboxd.com/api/v0';
@@ -36,7 +33,10 @@ const buildUrl = (method, path, body) => {
     saltedString += body;
   }
 
-  const signature = crypto.createHmac('sha256', LETTERBOXD_API_SECRET).update(saltedString).digest('hex');
+  const signature = crypto
+    .createHmac('sha256', LETTERBOXD_API_SECRET)
+    .update(saltedString)
+    .digest('hex');
 
   url += `&signature=${signature}`;
 
@@ -86,22 +86,22 @@ const formRequest = (method, path, body) => {
 
 // Data Loaders
 
-const filmLoader = new DataLoader((ids) => {
+const filmLoader = new DataLoader(ids => {
   const req = ids.map(id => request('GET', `film/${id}`).then(res => res.json()));
   return Promise.all(req);
 });
 
-const listLoader = new DataLoader((ids) => {
+const listLoader = new DataLoader(ids => {
   const req = ids.map(id => request('GET', `list/${id}`).then(res => res.json()));
   return Promise.all(req);
 });
 
-const memberLoader = new DataLoader((ids) => {
+const memberLoader = new DataLoader(ids => {
   const req = ids.map(id => request('GET', `member/${id}`).then(res => res.json()));
   return Promise.all(req);
 });
 
-const contributorLoader = new DataLoader((ids) => {
+const contributorLoader = new DataLoader(ids => {
   const req = ids.map(id => request('GET', `contributor/${id}`).then(res => res.json()));
   return Promise.all(req);
 });
@@ -153,14 +153,17 @@ const resolvers = {
         url += `?${query}`;
       }
 
-      return request('GET', url).then(res => res.json()).then(json => json.items);
+      return request('GET', url)
+        .then(res => res.json())
+        .then(json => json.items);
     },
 
     film: (root, args, context) => context.filmLoader.load(args.id),
 
     filmStatistics: (root, args) => request('GET', `film/${args.film}/statistics`).then(res => res.json()),
 
-    relationshipToFilm: (root, args) => request('GET', `film/${args.film}/me`, null, args.accessToken).then(res => res.json()),
+    relationshipToFilm: (root, args) =>
+      request('GET', `film/${args.film}/me`, null, args.accessToken).then(res => res.json()),
 
     filmCollection: (root, args) => {
       let url = `film-collection/${args.id}`;
@@ -187,10 +190,15 @@ const resolvers = {
         url += `?${query}`;
       }
 
-      return request('GET', url).then(res => res.json()).then(json => json.items);
+      return request('GET', url)
+        .then(res => res.json())
+        .then(json => json.items);
     },
 
-    filmAvailability: (root, args) => request('GET', `film/${args.film}/availability`, null, args.accessToken).then(res => res.json()).then(json => json.items),
+    filmAvailability: (root, args) =>
+      request('GET', `film/${args.film}/availability`, null, args.accessToken)
+        .then(res => res.json())
+        .then(json => json.items),
 
     lists: (root, args) => {
       let url = 'lists';
@@ -200,16 +208,22 @@ const resolvers = {
         url += `?${query}`;
       }
 
-      return request('GET', url).then(res => res.json()).then(json => json.items);
+      return request('GET', url)
+        .then(res => res.json())
+        .then(json => json.items);
     },
 
     list: (root, args, context) => context.listLoader.load(args.id),
 
     listStatistics: (root, args) => request('GET', `list/${args.list}/statistics`).then(res => res.json()),
 
-    listComments: (root, args) => request('GET', `list/${args.list}/comments`).then(res => res.json()).then(json => json.items),
+    listComments: (root, args) =>
+      request('GET', `list/${args.list}/comments`)
+        .then(res => res.json())
+        .then(json => json.items),
 
-    relationshipToList: (root, args) => request('GET', `list/${args.list}/me`, null, args.accessToken).then(res => res.json()),
+    relationshipToList: (root, args) =>
+      request('GET', `list/${args.list}/me`, null, args.accessToken).then(res => res.json()),
 
     logEntries: (root, args) => {
       let url = 'log-entries';
@@ -219,15 +233,21 @@ const resolvers = {
         url += `?${query}`;
       }
 
-      return request('GET', url).then(res => res.json()).then(json => json.items);
+      return request('GET', url)
+        .then(res => res.json())
+        .then(json => json.items);
     },
     logEntry: (root, args) => request('GET', `log-entry/${args.id}`).then(res => res.json()),
 
     reviewStatistics: (root, args) => request('GET', `log-entry/${args.logEntry}/statistics`).then(res => res.json()),
 
-    reviewComments: (root, args) => request('GET', `log-entry/${args.logEntry}/comments`).then(res => res.json()).then(json => json.items),
+    reviewComments: (root, args) =>
+      request('GET', `log-entry/${args.logEntry}/comments`)
+        .then(res => res.json())
+        .then(json => json.items),
 
-    relationshipToReview: (root, args) => request('GET', `log-entry/${args.logEntry}/me`, null, args.accessToken).then(res => res.json()),
+    relationshipToReview: (root, args) =>
+      request('GET', `log-entry/${args.logEntry}/me`, null, args.accessToken).then(res => res.json()),
 
     generateToken: (root, args) => {
       const params = {
@@ -249,7 +269,9 @@ const resolvers = {
         url += `?${query}`;
       }
 
-      return request('GET', url).then(res => res.json()).then(json => json.result);
+      return request('GET', url)
+        .then(res => res.json())
+        .then(json => json.result);
     },
 
     me: (root, args) => request('GET', 'me', null, args.accessToken).then(res => res.json()),
@@ -262,16 +284,24 @@ const resolvers = {
         url += `?${query}`;
       }
 
-      return request('GET', url).then(res => res.json()).then(json => json.items);
+      return request('GET', url)
+        .then(res => res.json())
+        .then(json => json.items);
     },
 
     member: (root, args, context) => context.memberLoader.load(args.id),
 
     memberStatistics: (root, args) => request('GET', `member/${args.member}/statistics`).then(res => res.json()),
 
-    memberLogEntryTags: (root, args) => request('GET', `member/${args.member}/log-entry-tags`).then(res => res.json()).then(json => json.items),
+    memberLogEntryTags: (root, args) =>
+      request('GET', `member/${args.member}/log-entry-tags`)
+        .then(res => res.json())
+        .then(json => json.items),
 
-    memberListTags: (root, args) => request('GET', `member/${args.member}/list-tags-2`).then(res => res.json()).then(json => json.items),
+    memberListTags: (root, args) =>
+      request('GET', `member/${args.member}/list-tags-2`)
+        .then(res => res.json())
+        .then(json => json.items),
 
     watchlist: (root, args) => {
       let url = `member/${args.member}/watchlist`;
@@ -284,12 +314,20 @@ const resolvers = {
         url += `?${query}`;
       }
 
-      return request('GET', url).then(res => res.json()).then(json => json.items);
+      return request('GET', url)
+        .then(res => res.json())
+        .then(json => json.items);
     },
 
-    genres: () => request('GET', 'films/genres').then(res => res.json()).then(json => json.items),
+    genres: () =>
+      request('GET', 'films/genres')
+        .then(res => res.json())
+        .then(json => json.items),
 
-    services: () => request('GET', 'films/film-services').then(res => res.json()).then(json => json.items),
+    services: () =>
+      request('GET', 'films/film-services')
+        .then(res => res.json())
+        .then(json => json.items),
 
     contributor: (root, args, context) => context.contributorLoader.load(args.id),
 
@@ -304,7 +342,9 @@ const resolvers = {
         url += `?${query}`;
       }
 
-      return request('GET', url).then(res => res.json()).then(json => json.items);
+      return request('GET', url)
+        .then(res => res.json())
+        .then(json => json.items);
     },
 
     search: (root, args) => {
@@ -315,7 +355,9 @@ const resolvers = {
         url += `?${query}`;
       }
 
-      return request('GET', url).then(res => res.json()).then(json => json.items);
+      return request('GET', url)
+        .then(res => res.json())
+        .then(json => json.items);
     },
   },
 
@@ -345,7 +387,7 @@ const resolvers = {
     genres: fetchFromDetailIfFilmSummary,
     trailer: fetchFromDetailIfFilmSummary,
     backdrop: fetchFromDetailIfFilmSummary,
-    directors: (film) => {
+    directors: film => {
       if (isFilmSummary(film)) {
         return film.directors;
       }
@@ -365,9 +407,11 @@ const resolvers = {
   },
   List: {
     hasEntriesWithNotes: fetchFromDetailIfListSummary,
-    tags: (list) => {
+    tags: list => {
       if (isListSummary(list)) {
-        return request('GET', `list/${list.id}`).then(res => res.json()).then(json => json.tags2);
+        return request('GET', `list/${list.id}`)
+          .then(res => res.json())
+          .then(json => json.tags2);
       }
       return list.tags2;
     },
@@ -378,7 +422,7 @@ const resolvers = {
     whenPublished: fetchFromDetailIfListSummary,
   },
   Contributor: {
-    characterName: (contributor) => {
+    characterName: contributor => {
       if (isContributorSummary(contributor)) {
         return contributor.characterName;
       }

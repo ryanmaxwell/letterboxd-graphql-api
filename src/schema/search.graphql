@@ -26,41 +26,41 @@ enum SearchInclude {
 type FilmSearchItem implements SearchItem {
   score: Float!
   type: SearchItemType!
-  
+
   film: Film!
 }
 
 type ListSearchItem implements SearchItem {
   score: Float!
   type: SearchItemType!
-  
+
   list: List!
 }
 
 type ReviewSearchItem implements SearchItem {
   score: Float!
   type: SearchItemType!
-  
+
   review: LogEntry!
 }
 
 type MemberSearchItem implements SearchItem {
   score: Float!
   type: SearchItemType!
-  
+
   member: Member!
 }
 
 type ContributorSearchItem implements SearchItem {
   score: Float!
   type: SearchItemType!
-  
+
   contributor: Contributor!
 }
 
 type TagSearchItem implements SearchItem {
   score: Float!
   type: SearchItemType!
-  
+
   tag: String!
 }
