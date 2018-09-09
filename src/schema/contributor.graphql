@@ -1,4 +1,29 @@
-# Contributors
+# Queries
+
+extend type Query {
+  contributor(id: ID!): Contributor
+
+  contributions(
+    contributor: ID!
+    type: ContributionType
+    genre: ID
+    decade: Int
+    year: Int
+    service: ID
+    member: ID
+    memberRelationship: FilmMemberRelationship
+    includeFriends: IncludeFriends
+    tagCode: String
+    tagger: String
+    includeTaggerFriends: IncludeFriends
+    where: [FilmsWhere!]
+    sort: FilmContributionsSort
+    perPage: Int
+    cursor: ID
+  ): [FilmContribution!]
+}
+
+# Types
 
 type Contributor {
   id: ID!

@@ -1,4 +1,41 @@
-# Log Entries
+# Queries
+
+extend type Query {
+  logEntries(
+    film: ID
+    member: ID
+    memberRelationship: LogEntryMemberRelationship
+    filmMemberRelationship: FilmMemberRelationship
+    includeFriends: IncludeFriends
+    year: Int
+    month: Int
+    week: Int
+    day: Int
+    minRating: Float
+    maxRating: Float
+    filmDecade: Int
+    filmYear: Int
+    genre: ID
+    tagCode: String
+    tagger: String
+    includeTaggerFriends: IncludeFriends
+    service: ID
+    where: [LogEntriesWhere!]
+    sort: LogEntriesSort
+    perPage: Int
+    cursor: ID
+  ): [LogEntry!]!
+
+  logEntry(id: ID!): LogEntry
+
+  reviewStatistics(logEntry: ID!): ReviewStatistics
+
+  reviewComments(logEntry: ID!): [ReviewComment!]
+
+  relationshipToReview(accessToken: String!, logEntry: ID!): ReviewRelationship
+}
+
+# Types
 
 type LogEntry {
   id: ID!

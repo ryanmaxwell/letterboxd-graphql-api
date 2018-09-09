@@ -1,4 +1,10 @@
-# Search
+# Queries
+
+extend type Query {
+  search(input: String!, include: [SearchInclude!], perPage: Int, cursor: ID): [SearchItem!]!
+}
+
+# Types
 
 interface SearchItem {
   score: Float!

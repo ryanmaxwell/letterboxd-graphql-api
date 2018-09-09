@@ -1,4 +1,32 @@
-# Lists
+# Queries
+
+extend type Query {
+  lists(
+    film: ID
+    clonedFrom: ID
+    member: ID
+    memberRelationship: ListMemberRelationship
+    includeFriends: IncludeFriends
+    tagCode: String
+    tagger: String
+    includeTaggerFriends: IncludeFriends
+    where: [ListsWhere!]
+    filter: [ListsFilter!]
+    sort: ListsSort
+    perPage: Int
+    cursor: ID
+  ): [List!]!
+
+  list(id: ID!): List
+
+  listStatistics(list: ID!): ListStatistics
+
+  listComments(list: ID!): [ListComment!]
+
+  relationshipToList(accessToken: String!, list: ID!): ListRelationship
+}
+
+# Types
 
 type List {
   id: ID!

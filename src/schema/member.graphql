@@ -1,3 +1,48 @@
+# Queries
+
+extend type Query {
+  me(accessToken: String!): MemberAccount
+
+  members(
+    member: ID
+    memberRelationship: MemberRelationship
+    film: ID
+    filmRelationship: FilmMemberRelationship
+    list: ID
+    review: ID
+    sort: MembersSort
+    perPage: Int
+    cursor: ID
+  ): [Member!]!
+
+  member(id: ID!): Member
+
+  memberStatistics(member: ID!): MemberStatistics
+
+  memberLogEntryTags(member: ID!): [MemberTag!]
+
+  memberListTags(member: ID!): [MemberTag!]
+
+  watchlist(
+    member: ID!
+    genre: ID
+    decade: Int
+    year: Int
+    service: ID
+    memberRelationship: FilmMemberRelationship
+    includeFriends: IncludeFriends
+    tagCode: String
+    tagger: String
+    includeTaggerFriends: IncludeFriends
+    where: [FilmsWhere!]
+    sort: WatchlistSort
+    perPage: Int
+    cursor: ID
+  ): [Film!]
+}
+
+# Types
+
 # Me
 
 type AccessToken {

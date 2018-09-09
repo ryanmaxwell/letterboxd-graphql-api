@@ -1,4 +1,65 @@
-# Films
+# Queries
+
+extend type Query {
+  films(
+    genre: ID
+    decade: Int
+    year: Int
+    service: ID
+    member: ID
+    memberRelationship: FilmMemberRelationship
+    includeFriends: IncludeFriends
+    tagCode: String
+    tagger: String
+    includeTaggerFriends: IncludeFriends
+    where: [FilmsWhere!]
+    sort: FilmsSort
+    perPage: Int
+    cursor: ID
+  ): [Film!]!
+
+  film(id: ID!): Film
+
+  filmStatistics(film: ID!): FilmStatistics
+
+  relationshipToFilm(accessToken: String!, film: ID!): FilmRelationship
+
+  filmCollection(
+    id: ID!
+    genre: ID
+    decade: Int
+    year: Int
+    service: ID
+    member: ID
+    memberRelationship: FilmMemberRelationship
+    includeFriends: IncludeFriends
+    tagCode: String
+    tagger: String
+    includeTaggerFriends: IncludeFriends
+    where: [FilmsWhere!]
+    sort: FilmsSort
+  ): FilmCollection
+
+  # Private endpoint restricted to Letterboxd and approved partners only.
+  # Access token optional, will be personalized to user's preferred stores if provided
+  filmAvailability(accessToken: String, film: ID!): [FilmAvailability!]
+
+  filmMembers(
+    film: ID!
+    member: ID
+    memberRelationship: MemberRelationship
+    filmRelationship: FilmMemberRelationship
+    sort: MembersSort
+    perPage: Int
+    cursor: ID
+  ): [MemberFilmRelationship!]
+
+  genres: [Genre!]!
+
+  services: [Service!]!
+}
+
+# Types
 
 type Film {
   id: ID!
