@@ -10,6 +10,7 @@
   "author": "Ryan Maxwell",
   "license": "ISC",
   "dependencies": {
+    "apollo-datasource-rest": "^0.1.5",
     "apollo-server": "^2.0.0",
     "crypto": "^1.0.1",
     "dataloader": "^1.4.0",

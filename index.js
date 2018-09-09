@@ -1,5 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server');
-const DataLoader = require('dataloader');
+const { RESTDataSource } = require('apollo-datasource-rest');
 const fs = require('fs');
 const fetch = require('node-fetch');
 const crypto = require('crypto');
@@ -8,8 +8,92 @@ const queryString = require('query-string');
 
 const { LETTERBOXD_API_KEY, LETTERBOXD_API_SECRET } = process.env;
 
+const env = process.env.NODE_ENV || 'dev';
+
+// for reverse-proxy debugging during development
+if (env === 'dev') {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
+
 // base URL including version, excluding trailing slash
 const API_BASE_URL = 'https://api.letterboxd.com/api/v0';
+
+class LetterboxdAPI extends RESTDataSource {
+  constructor() {
+    super();
+
+    if (env === 'dev') {
+      this.baseURL = 'https://localhost:62917/api/v0/';
+    } else {
+      this.baseURL = API_BASE_URL;
+    }
+  }
+
+  async getFilm(id) {
+    return this.get(`film/${id}`);
+  }
+
+  async getList(id) {
+    return this.get(`list/${id}`);
+  }
+
+  async getMember(id) {
+    return this.get(`member/${id}`);
+  }
+
+  async getContributor(id) {
+    return this.get(`contributor/${id}`);
+  }
+
+  cacheKeyFor(request) {
+    // our cache key removes the params added during the signing process
+    // this is necessary for request caching and de-duplication
+
+    let qs = queryString.parseUrl(request.url);
+    let queryParams = qs.query;
+    delete queryParams.apikey;
+    delete queryParams.nonce;
+    delete queryParams.signature;
+    delete queryParams.timestamp;
+
+    let cacheUrl = qs.url;
+
+    const query = queryString.stringify(queryParams);
+    if (query) {
+      cacheUrl += `?${query}`;
+    }
+
+    return cacheUrl;
+  }
+
+  willSendRequest(request) {
+    LetterboxdAPI.signRequest(request);
+  }
+
+  static signRequest(request) {
+    const now = new Date();
+    const seconds = Math.round(now.getTime() / 1000);
+
+    request.params.append('apikey', LETTERBOXD_API_KEY);
+    request.params.append('nonce', uuid());
+    request.params.append('timestamp', seconds);
+
+    const finalUrl = `${API_BASE_URL}/${request.path}?${request.params.toString()}`;
+
+    let saltedString = `${request.method}\u0000${finalUrl}\u0000`;
+
+    if (request.body) {
+      saltedString += request.body;
+    }
+
+    const signature = crypto
+      .createHmac('sha256', LETTERBOXD_API_SECRET)
+      .update(saltedString)
+      .digest('hex');
+
+    request.params.append('signature', signature);
+  }
+}
 
 // Requests
 
@@ -39,8 +123,6 @@ const buildUrl = (method, path, body) => {
     .digest('hex');
 
   url += `&signature=${signature}`;
-
-  console.log(url);
 
   return url;
 };
@@ -84,29 +166,23 @@ const formRequest = (method, path, body) => {
   });
 };
 
-// Data Loaders
-
-const filmLoader = new DataLoader(ids => {
-  const req = ids.map(id => request('GET', `film/${id}`).then(res => res.json()));
-  return Promise.all(req);
-});
-
-const listLoader = new DataLoader(ids => {
-  const req = ids.map(id => request('GET', `list/${id}`).then(res => res.json()));
-  return Promise.all(req);
-});
-
-const memberLoader = new DataLoader(ids => {
-  const req = ids.map(id => request('GET', `member/${id}`).then(res => res.json()));
-  return Promise.all(req);
-});
-
-const contributorLoader = new DataLoader(ids => {
-  const req = ids.map(id => request('GET', `contributor/${id}`).then(res => res.json()));
-  return Promise.all(req);
-});
-
 // Utility
+
+const fieldResolver = (source, args, context, info) => {
+  // ensure source is a value for which property access is acceptable.
+  if (typeof source === 'object' || typeof source === 'function') {
+    // default resolver behaviour first
+    const property = source[info.fieldName];
+    if (typeof property === 'function') {
+      return source[info.fieldName](args, context, info);
+    }
+    if (typeof property !== 'undefined') {
+      return property;
+    }
+  }
+  // unresolved
+  return undefined;
+};
 
 const isFilmSummary = film => film.trailer === undefined;
 const isListSummary = list => list.links === undefined;
@@ -115,30 +191,34 @@ const isContributorSummary = contributor => contributor.links === undefined;
 
 const fetchFromDetailIfFilmSummary = (film, args, context, info) => {
   if (isFilmSummary(film)) {
-    return context.filmLoader.load(film.id).then(json => json[info.fieldName]);
+    return context.dataSources.letterboxdAPI.getFilm(film.id).then(json => fieldResolver(json, args, context, info));
   }
-  return film[info.fieldName];
+  return fieldResolver(film, args, context, info);
 };
 
 const fetchFromDetailIfListSummary = (list, args, context, info) => {
   if (isListSummary(list)) {
-    return context.listLoader.load(list.id).then(json => json[info.fieldName]);
+    return context.dataSources.letterboxdAPI.getList(list.id).then(json => fieldResolver(json, args, context, info));
   }
-  return list[info.fieldName];
+  return fieldResolver(list, args, context, info);
 };
 
 const fetchFromDetailIfMemberSummary = (member, args, context, info) => {
   if (isMemberSummary(member)) {
-    return context.memberLoader.load(member.id).then(json => json[info.fieldName]);
+    return context.dataSources.letterboxdAPI
+      .getMember(member.id)
+      .then(json => fieldResolver(json, args, context, info));
   }
-  return member[info.fieldName];
+  return fieldResolver(member, args, context, info);
 };
 
 const fetchFromDetailIfContributorSummary = (contributor, args, context, info) => {
   if (isContributorSummary(contributor)) {
-    return context.contributorLoader.load(contributor.id).then(json => json[info.fieldName]);
+    return context.dataSources.letterboxdAPI
+      .getContributor(contributor.id)
+      .then(json => fieldResolver(json, args, context, info));
   }
-  return contributor[info.fieldName];
+  return fieldResolver(contributor, args, context, info);
 };
 
 // Resolvers
@@ -158,7 +238,7 @@ const resolvers = {
         .then(json => json.items);
     },
 
-    film: (root, args, context) => context.filmLoader.load(args.id),
+    film: (root, args, context) => context.dataSources.letterboxdAPI.getFilm(args.id),
 
     filmStatistics: (root, args) => request('GET', `film/${args.film}/statistics`).then(res => res.json()),
 
@@ -213,7 +293,7 @@ const resolvers = {
         .then(json => json.items);
     },
 
-    list: (root, args, context) => context.listLoader.load(args.id),
+    list: (root, args, context) => context.dataSources.letterboxdAPI.getList(args.id),
 
     listStatistics: (root, args) => request('GET', `list/${args.list}/statistics`).then(res => res.json()),
 
@@ -289,7 +369,7 @@ const resolvers = {
         .then(json => json.items);
     },
 
-    member: (root, args, context) => context.memberLoader.load(args.id),
+    member: (root, args, context) => context.dataSources.letterboxdAPI.getMember(args.id),
 
     memberStatistics: (root, args) => request('GET', `member/${args.member}/statistics`).then(res => res.json()),
 
@@ -329,7 +409,7 @@ const resolvers = {
         .then(res => res.json())
         .then(json => json.items),
 
-    contributor: (root, args, context) => context.contributorLoader.load(args.id),
+    contributor: (root, args, context) => context.dataSources.letterboxdAPI.getContributor(args.id),
 
     contributions: (root, args) => {
       let url = `contributor/${args.contributor}/contributions`;
@@ -384,6 +464,8 @@ const resolvers = {
       }
       return result;
     },
+    description: fetchFromDetailIfFilmSummary,
+    tagline: fetchFromDetailIfFilmSummary,
     genres: fetchFromDetailIfFilmSummary,
     trailer: fetchFromDetailIfFilmSummary,
     backdrop: fetchFromDetailIfFilmSummary,
@@ -391,7 +473,11 @@ const resolvers = {
       if (isFilmSummary(film)) {
         return film.directors;
       }
-      return film.contributions.filter(contribution => contribution.type === 'Director').contributors;
+      const directorContributions = film.contributions.find(contribution => contribution.type === 'Director');
+      if (directorContributions) {
+        return directorContributions.contributors;
+      }
+      return [];
     },
   },
   Member: {
@@ -449,11 +535,9 @@ const typeDefs = gql`
 const server = new ApolloServer({
   typeDefs,
   resolvers,
-  context: {
-    filmLoader,
-    listLoader,
-    memberLoader,
-    contributorLoader,
+  fieldResolver,
+  dataSources: () => {
+    return { letterboxdAPI: new LetterboxdAPI() };
   },
 });
 
