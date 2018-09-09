@@ -6,6 +6,9 @@ type Film {
   originalName: String
   alternativeNames: [String!]!
   releaseYear: Int
+  tagline: String
+  description: String
+  runTime: Int
   filmCollectionId: ID
   backdropFocalPoint: Float
   genres: [Genre!]!
