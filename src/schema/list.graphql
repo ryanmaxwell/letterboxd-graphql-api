@@ -15,7 +15,7 @@ extend type Query {
     sort: ListsSort
     perPage: Int
     cursor: ID
-  ): [List!]!
+  ): ListPage!
 
   list(id: ID!): List
 
@@ -27,6 +27,11 @@ extend type Query {
 }
 
 # Types
+
+type ListPage {
+  items: [List!]!
+  next: ID
+}
 
 type List {
   id: ID!

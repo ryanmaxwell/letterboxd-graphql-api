@@ -1,4 +1,4 @@
-const { ApolloServer, gql } = require('apollo-server');
+const { ApolloServer } = require('apollo-server');
 const { RESTDataSource } = require('apollo-datasource-rest');
 const fs = require('fs');
 const fetch = require('node-fetch');
@@ -233,9 +233,7 @@ const resolvers = {
         url += `?${query}`;
       }
 
-      return request('GET', url)
-        .then(res => res.json())
-        .then(json => json.items);
+      return request('GET', url).then(res => res.json());
     },
 
     film: (root, args, context) => context.dataSources.letterboxdAPI.getFilm(args.id),
@@ -270,9 +268,7 @@ const resolvers = {
         url += `?${query}`;
       }
 
-      return request('GET', url)
-        .then(res => res.json())
-        .then(json => json.items);
+      return request('GET', url).then(res => res.json());
     },
 
     filmAvailability: (root, args) =>
@@ -288,9 +284,7 @@ const resolvers = {
         url += `?${query}`;
       }
 
-      return request('GET', url)
-        .then(res => res.json())
-        .then(json => json.items);
+      return request('GET', url).then(res => res.json());
     },
 
     list: (root, args, context) => context.dataSources.letterboxdAPI.getList(args.id),
@@ -313,9 +307,7 @@ const resolvers = {
         url += `?${query}`;
       }
 
-      return request('GET', url)
-        .then(res => res.json())
-        .then(json => json.items);
+      return request('GET', url).then(res => res.json());
     },
     logEntry: (root, args) => request('GET', `log-entry/${args.id}`).then(res => res.json()),
 
@@ -364,9 +356,7 @@ const resolvers = {
         url += `?${query}`;
       }
 
-      return request('GET', url)
-        .then(res => res.json())
-        .then(json => json.items);
+      return request('GET', url).then(res => res.json());
     },
 
     member: (root, args, context) => context.dataSources.letterboxdAPI.getMember(args.id),
@@ -394,9 +384,7 @@ const resolvers = {
         url += `?${query}`;
       }
 
-      return request('GET', url)
-        .then(res => res.json())
-        .then(json => json.items);
+      return request('GET', url).then(res => res.json());
     },
 
     genres: () =>
@@ -422,9 +410,7 @@ const resolvers = {
         url += `?${query}`;
       }
 
-      return request('GET', url)
-        .then(res => res.json())
-        .then(json => json.items);
+      return request('GET', url).then(res => res.json());
     },
 
     search: (root, args) => {
@@ -435,9 +421,7 @@ const resolvers = {
         url += `?${query}`;
       }
 
-      return request('GET', url)
-        .then(res => res.json())
-        .then(json => json.items);
+      return request('GET', url).then(res => res.json());
     },
   },
 

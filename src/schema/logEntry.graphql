@@ -24,7 +24,7 @@ extend type Query {
     sort: LogEntriesSort
     perPage: Int
     cursor: ID
-  ): [LogEntry!]!
+  ): LogEntryPage!
 
   logEntry(id: ID!): LogEntry
 
@@ -36,6 +36,11 @@ extend type Query {
 }
 
 # Types
+
+type LogEntryPage {
+  items: [LogEntry!]!
+  next: ID
+}
 
 type LogEntry {
   id: ID!
