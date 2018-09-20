@@ -33,12 +33,24 @@ class LetterboxdAPI extends RESTDataSource {
     return this.get(`film/${id}`);
   }
 
+  async getFilms(params) {
+    return this.get('films', params);
+  }
+
   async getList(id) {
     return this.get(`list/${id}`);
   }
 
+  async getLists(params) {
+    return this.get('lists', params);
+  }
+
   async getMember(id) {
     return this.get(`member/${id}`);
+  }
+
+  async getMembers(params) {
+    return this.get('members', params);
   }
 
   async getContributor(id) {
@@ -225,16 +237,7 @@ const fetchFromDetailIfContributorSummary = (contributor, args, context, info) =
 
 const resolvers = {
   Query: {
-    films: (root, args) => {
-      let url = 'films';
-
-      const query = queryString.stringify(args);
-      if (query) {
-        url += `?${query}`;
-      }
-
-      return request('GET', url).then(res => res.json());
-    },
+    films: (root, args, context) => context.dataSources.letterboxdAPI.getFilms(args),
 
     film: (root, args, context) => context.dataSources.letterboxdAPI.getFilm(args.id),
 
@@ -276,16 +279,7 @@ const resolvers = {
         .then(res => res.json())
         .then(json => json.items),
 
-    lists: (root, args) => {
-      let url = 'lists';
-
-      const query = queryString.stringify(args);
-      if (query) {
-        url += `?${query}`;
-      }
-
-      return request('GET', url).then(res => res.json());
-    },
+    lists: (root, args, context) => context.dataSources.letterboxdAPI.getLists(args),
 
     list: (root, args, context) => context.dataSources.letterboxdAPI.getList(args.id),
 
@@ -342,16 +336,7 @@ const resolvers = {
 
     me: (root, args) => request('GET', 'me', null, args.accessToken).then(res => res.json()),
 
-    members: (root, args) => {
-      let url = 'members';
-
-      const query = queryString.stringify(args);
-      if (query) {
-        url += `?${query}`;
-      }
-
-      return request('GET', url).then(res => res.json());
-    },
+    members: (root, args, context) => context.dataSources.letterboxdAPI.getMembers(args),
 
     member: (root, args, context) => context.dataSources.letterboxdAPI.getMember(args.id),
 
@@ -514,9 +499,7 @@ const server = new ApolloServer({
   typeDefs,
   resolvers,
   fieldResolver,
-  dataSources: () => {
-    return { letterboxdAPI: new LetterboxdAPI() };
-  },
+  dataSources: () => ({ letterboxdAPI: new LetterboxdAPI() }),
 });
 
 server.listen().then(({ url }) => {
