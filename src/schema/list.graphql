@@ -21,7 +21,7 @@ extend type Query {
 
   listStatistics(list: ID!): ListStatistics
 
-  listComments(list: ID!): [ListComment!]
+  listComments(list: ID!): ListCommentPage
 
   relationshipToList(accessToken: String!, list: ID!): ListRelationship
 }

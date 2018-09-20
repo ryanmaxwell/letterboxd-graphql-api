@@ -30,7 +30,7 @@ extend type Query {
 
   reviewStatistics(logEntry: ID!): ReviewStatistics
 
-  reviewComments(logEntry: ID!): [ReviewComment!]
+  reviewComments(logEntry: ID!): ReviewCommentPage
 
   relationshipToReview(accessToken: String!, logEntry: ID!): ReviewRelationship
 }

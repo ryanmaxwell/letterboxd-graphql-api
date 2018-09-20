@@ -51,3 +51,13 @@ enum CommentType {
   ListComment
   ReviewComment
 }
+
+type ListCommentPage {
+  items: [ListComment!]!
+  next: ID
+}
+
+type ReviewCommentPage {
+  items: [ReviewComment!]!
+  next: ID
+}

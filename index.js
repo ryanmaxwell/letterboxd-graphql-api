@@ -291,10 +291,7 @@ const resolvers = {
 
     listStatistics: (root, args) => request('GET', `list/${args.list}/statistics`).then(res => res.json()),
 
-    listComments: (root, args) =>
-      request('GET', `list/${args.list}/comments`)
-        .then(res => res.json())
-        .then(json => json.items),
+    listComments: (root, args) => request('GET', `list/${args.list}/comments`).then(res => res.json()),
 
     relationshipToList: (root, args) =>
       request('GET', `list/${args.list}/me`, null, args.accessToken).then(res => res.json()),
@@ -313,10 +310,7 @@ const resolvers = {
 
     reviewStatistics: (root, args) => request('GET', `log-entry/${args.logEntry}/statistics`).then(res => res.json()),
 
-    reviewComments: (root, args) =>
-      request('GET', `log-entry/${args.logEntry}/comments`)
-        .then(res => res.json())
-        .then(json => json.items),
+    reviewComments: (root, args) => request('GET', `log-entry/${args.logEntry}/comments`).then(res => res.json()),
 
     relationshipToReview: (root, args) =>
       request('GET', `log-entry/${args.logEntry}/me`, null, args.accessToken).then(res => res.json()),
