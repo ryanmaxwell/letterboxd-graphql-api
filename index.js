@@ -202,17 +202,9 @@ const resolvers = {
     relationshipToList: (root, args) =>
       request('GET', `list/${args.list}/me`, null, args.accessToken).then(res => res.json()),
 
-    logEntries: (root, args) => {
-      let url = 'log-entries';
+    logEntries: (root, args, context) => context.dataSources.letterboxdAPI.getLogEntries(args),
 
-      const query = queryString.stringify(args);
-      if (query) {
-        url += `?${query}`;
-      }
-
-      return request('GET', url).then(res => res.json());
-    },
-    logEntry: (root, args) => request('GET', `log-entry/${args.id}`).then(res => res.json()),
+    logEntry: (root, args, context) => context.dataSources.letterboxdAPI.getLogEntry(args.id),
 
     reviewStatistics: (root, args) => request('GET', `log-entry/${args.logEntry}/statistics`).then(res => res.json()),
 
