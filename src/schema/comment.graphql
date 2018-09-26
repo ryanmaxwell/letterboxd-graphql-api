@@ -15,11 +15,11 @@ interface Comment {
   editableWindowExpiresIn: Int
 }
 
-type ListComment implements Comment {
+type ListComment inherits Comment implements Comment {
   list: ListIdentifier!
 }
 
-type ReviewComment implements Comment {
+type ReviewComment inherits Comment implements Comment {
   review: ReviewIdentifier!
 }
 

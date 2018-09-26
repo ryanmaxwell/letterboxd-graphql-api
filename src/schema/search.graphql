@@ -29,26 +29,26 @@ enum SearchInclude {
   TagSearchItem
 }
 
-type FilmSearchItem implements SearchItem {
+type FilmSearchItem inherits SearchItem implements SearchItem {
   film: Film!
 }
 
-type ListSearchItem implements SearchItem {
+type ListSearchItem inherits SearchItem implements SearchItem {
   list: List!
 }
 
-type ReviewSearchItem implements SearchItem {
+type ReviewSearchItem inherits SearchItem implements SearchItem {
   review: LogEntry!
 }
 
-type MemberSearchItem implements SearchItem {
+type MemberSearchItem inherits SearchItem implements SearchItem {
   member: Member!
 }
 
-type ContributorSearchItem implements SearchItem {
+type ContributorSearchItem inherits SearchItem implements SearchItem {
   contributor: Contributor!
 }
 
-type TagSearchItem implements SearchItem {
+type TagSearchItem inherits SearchItem implements SearchItem {
   tag: String!
 }
