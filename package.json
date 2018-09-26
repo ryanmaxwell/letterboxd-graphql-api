@@ -15,6 +15,7 @@
     "crypto": "^1.0.1",
     "dataloader": "^1.4.0",
     "graphql": "^0.13.2",
+    "graphql-s2s": "^0.17.1",
     "node-fetch": "^2.2.0",
     "query-string": "^6.1.0",
     "uuid-random": "^1.0.6"

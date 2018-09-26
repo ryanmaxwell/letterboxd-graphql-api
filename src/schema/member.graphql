@@ -13,7 +13,7 @@ extend type Query {
     sort: MembersSort
     perPage: Int
     cursor: ID
-  ): MemberPage!
+  ): Page<Member>!
 
   member(id: ID!): Member
 
@@ -38,7 +38,7 @@ extend type Query {
     sort: WatchlistSort
     perPage: Int
     cursor: ID
-  ): FilmPage!
+  ): Page<Film>!
 }
 
 # Types
@@ -70,11 +70,6 @@ type MemberAccount {
 }
 
 # Members
-
-type MemberPage {
-  items: [Member!]!
-  next: ID
-}
 
 type Member {
   id: ID!

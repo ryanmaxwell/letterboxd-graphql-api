@@ -15,23 +15,18 @@ extend type Query {
     sort: ListsSort
     perPage: Int
     cursor: ID
-  ): ListPage!
+  ): Page<List>!
 
   list(id: ID!): List
 
   listStatistics(list: ID!): ListStatistics
 
-  listComments(list: ID!): ListCommentPage
+  listComments(list: ID!): Page<ListComment>
 
   relationshipToList(accessToken: String!, list: ID!): ListRelationship
 }
 
 # Types
-
-type ListPage {
-  items: [List!]!
-  next: ID
-}
 
 type List {
   id: ID!
