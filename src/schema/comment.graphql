@@ -15,15 +15,51 @@ interface Comment {
   editableWindowExpiresIn: Int
 }
 
-type ListComment inherits Comment implements Comment {
+type ListComment implements Comment {
+  id: ID!
+  type: CommentType!
+  comment: String
+  commentLbml: String
+  deleted: Boolean!
+  blocked: Boolean!
+  blockedByOwner: Boolean!
+  removedByAdmin: Boolean!
+  member: Member!
+  whenCreated: String!
+  whenUpdated: String
+  editableWindowExpiresIn: Int
+
   list: ListIdentifier!
 }
 
-type ReviewComment inherits Comment implements Comment {
+type ReviewComment implements Comment {
+  id: ID!
+  type: CommentType!
+  comment: String
+  commentLbml: String
+  deleted: Boolean!
+  blocked: Boolean!
+  blockedByOwner: Boolean!
+  removedByAdmin: Boolean!
+  member: Member!
+  whenCreated: String!
+  whenUpdated: String
+  editableWindowExpiresIn: Int
+
   review: ReviewIdentifier!
 }
 
 enum CommentType {
   ListComment
   ReviewComment
+}
+
+type ListCommentPage {
+  items: [ListComment!]!
+  next: ID
+}
+
+type ReviewCommentPage {
+  items: [ReviewComment!]!
+  next: ID
 }

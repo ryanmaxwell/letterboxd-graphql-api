@@ -13,7 +13,7 @@ extend type Query {
     sort: MembersSort
     perPage: Int
     cursor: ID
-  ): Page<Member>!
+  ): MemberPage!
 
   member(id: ID!): Member
 
@@ -38,12 +38,12 @@ extend type Query {
     sort: WatchlistSort
     perPage: Int
     cursor: ID
-  ): Page<Film>!
+  ): FilmPage!
 }
 
 # Types
 
-# Me
+## Me
 
 type AccessToken {
   access_token: String!
@@ -69,7 +69,12 @@ type MemberAccount {
   member: Member!
 }
 
-# Members
+## Members
+
+type MemberPage {
+  items: [Member!]!
+  next: ID
+}
 
 type Member {
   id: ID!

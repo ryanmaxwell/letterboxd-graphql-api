@@ -6,8 +6,3 @@ type Query {
 
   usernameCheck(username: String!): UsernameCheckResult
 }
-
-type Page<T> {
-  items: [T]!
-  next: ID
-}

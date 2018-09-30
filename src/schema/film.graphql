@@ -16,7 +16,7 @@ extend type Query {
     sort: FilmsSort
     perPage: Int
     cursor: ID
-  ): Page<Film>!
+  ): FilmPage!
 
   film(id: ID!): Film
 
@@ -52,7 +52,7 @@ extend type Query {
     sort: MembersSort
     perPage: Int
     cursor: ID
-  ): Page<MemberFilmRelationship>!
+  ): MemberFilmRelationshipPage!
 
   genres: [Genre!]!
 
@@ -60,6 +60,16 @@ extend type Query {
 }
 
 # Types
+
+type FilmPage {
+  items: [Film!]!
+  next: ID
+}
+
+type MemberFilmRelationshipPage {
+  items: [MemberFilmRelationship!]!
+  next: ID
+}
 
 type Film {
   id: ID!

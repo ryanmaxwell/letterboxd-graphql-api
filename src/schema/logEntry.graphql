@@ -24,18 +24,23 @@ extend type Query {
     sort: LogEntriesSort
     perPage: Int
     cursor: ID
-  ): Page<LogEntry>!
+  ): LogEntryPage!
 
   logEntry(id: ID!): LogEntry
 
   reviewStatistics(logEntry: ID!): ReviewStatistics
 
-  reviewComments(logEntry: ID!): Page<ReviewComment>
+  reviewComments(logEntry: ID!): ReviewCommentPage
 
   relationshipToReview(accessToken: String!, logEntry: ID!): ReviewRelationship
 }
 
 # Types
+
+type LogEntryPage {
+  items: [LogEntry!]!
+  next: ID
+}
 
 type LogEntry {
   id: ID!

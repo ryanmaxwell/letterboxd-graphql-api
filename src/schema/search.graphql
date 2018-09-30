@@ -1,10 +1,15 @@
 # Queries
 
 extend type Query {
-  search(input: String!, include: [SearchInclude!], perPage: Int, cursor: ID): Page<SearchItem>!
+  search(input: String!, include: [SearchInclude!], perPage: Int, cursor: ID): SearchItemPage!
 }
 
 # Types
+
+type SearchItemPage {
+  items: [SearchItem!]!
+  next: ID
+}
 
 interface SearchItem {
   score: Float!
@@ -29,26 +34,44 @@ enum SearchInclude {
   TagSearchItem
 }
 
-type FilmSearchItem inherits SearchItem implements SearchItem {
+type FilmSearchItem implements SearchItem {
+  score: Float!
+  type: SearchItemType!
+
   film: Film!
 }
 
-type ListSearchItem inherits SearchItem implements SearchItem {
+type ListSearchItem implements SearchItem {
+  score: Float!
+  type: SearchItemType!
+
   list: List!
 }
 
-type ReviewSearchItem inherits SearchItem implements SearchItem {
+type ReviewSearchItem implements SearchItem {
+  score: Float!
+  type: SearchItemType!
+
   review: LogEntry!
 }
 
-type MemberSearchItem inherits SearchItem implements SearchItem {
+type MemberSearchItem implements SearchItem {
+  score: Float!
+  type: SearchItemType!
+
   member: Member!
 }
 
-type ContributorSearchItem inherits SearchItem implements SearchItem {
+type ContributorSearchItem implements SearchItem {
+  score: Float!
+  type: SearchItemType!
+
   contributor: Contributor!
 }
 
-type TagSearchItem inherits SearchItem implements SearchItem {
+type TagSearchItem implements SearchItem {
+  score: Float!
+  type: SearchItemType!
+
   tag: String!
 }

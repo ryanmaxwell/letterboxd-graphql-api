@@ -20,10 +20,15 @@ extend type Query {
     sort: FilmContributionsSort
     perPage: Int
     cursor: ID
-  ): Page<FilmContribution>!
+  ): FilmContributionPage!
 }
 
 # Types
+
+type FilmContributionPage {
+  items: [FilmContribution!]!
+  next: ID
+}
 
 type Contributor {
   id: ID!

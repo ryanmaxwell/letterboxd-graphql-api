@@ -1,5 +1,4 @@
 const { ApolloServer, makeExecutableSchema } = require('apollo-server');
-const { transpileSchema } = require('graphql-s2s').graphqls2s;
 const fs = require('fs');
 
 const LetterboxdAPI = require('./src/letterboxdapi.js');
@@ -7,7 +6,7 @@ const { resolvers, fieldResolver } = require('./src/resolvers.js');
 
 // Server
 
-const rawSchema = `
+const typeDefs = `
   ${fs.readFileSync(__dirname.concat('/src/schema/schema.graphql'), 'utf8')}
   ${fs.readFileSync(__dirname.concat('/src/schema/comment.graphql'), 'utf8')}
   ${fs.readFileSync(__dirname.concat('/src/schema/contributor.graphql'), 'utf8')}
@@ -19,7 +18,7 @@ const rawSchema = `
 `;
 
 const schema = makeExecutableSchema({
-  typeDefs: transpileSchema(rawSchema),
+  typeDefs,
   resolvers,
 });
 
