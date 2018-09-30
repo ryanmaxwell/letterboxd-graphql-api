@@ -24,12 +24,24 @@ class LetterboxdAPI extends RESTDataSource {
     return this.get(`film/${id}`);
   }
 
+  async getFilmStatistics(id) {
+    return this.get(`film/${id}/statistics`);
+  }
+
   async getFilms(params) {
     return this.get('films', params);
   }
 
   async getList(id) {
     return this.get(`list/${id}`);
+  }
+
+  async getListStatistics(id) {
+    return this.get(`list/${id}/statistics`);
+  }
+
+  async getListComments(id) {
+    return this.get(`list/${id}/comments`);
   }
 
   async getLists(params) {
@@ -40,12 +52,24 @@ class LetterboxdAPI extends RESTDataSource {
     return this.get(`log-entry/${id}`);
   }
 
+  async getReviewStatistics(id) {
+    return this.get(`log-entry/${id}/statistics`);
+  }
+
+  async getReviewComments(id) {
+    return this.get(`log-entry/${id}/comments`);
+  }
+
   async getLogEntries(params) {
     return this.get('log-entries', params);
   }
 
   async getMember(id) {
     return this.get(`member/${id}`);
+  }
+
+  async getMemberStatistics(id) {
+    return this.get(`member/${id}/statistics`);
   }
 
   async getMembers(params) {

@@ -149,7 +149,7 @@ const resolvers = {
 
     film: (root, args, context) => context.dataSources.letterboxdAPI.getFilm(args.id),
 
-    filmStatistics: (root, args) => request('GET', `film/${args.film}/statistics`).then(res => res.json()),
+    filmStatistics: (root, args, context) => context.dataSources.letterboxdAPI.getFilmStatistics(args.film),
 
     relationshipToFilm: (root, args) =>
       request('GET', `film/${args.film}/me`, null, args.accessToken).then(res => res.json()),
@@ -191,9 +191,9 @@ const resolvers = {
 
     list: (root, args, context) => context.dataSources.letterboxdAPI.getList(args.id),
 
-    listStatistics: (root, args) => request('GET', `list/${args.list}/statistics`).then(res => res.json()),
+    listStatistics: (root, args, context) => context.dataSources.letterboxdAPI.getListStatistics(args.list),
 
-    listComments: (root, args) => request('GET', `list/${args.list}/comments`).then(res => res.json()),
+    listComments: (root, args, context) => context.dataSources.letterboxdAPI.getListComments(args.list),
 
     relationshipToList: (root, args) =>
       request('GET', `list/${args.list}/me`, null, args.accessToken).then(res => res.json()),
@@ -202,9 +202,9 @@ const resolvers = {
 
     logEntry: (root, args, context) => context.dataSources.letterboxdAPI.getLogEntry(args.id),
 
-    reviewStatistics: (root, args) => request('GET', `log-entry/${args.logEntry}/statistics`).then(res => res.json()),
+    reviewStatistics: (root, args, context) => context.dataSources.letterboxdAPI.getReviewStatistics(args.logEntry),
 
-    reviewComments: (root, args) => request('GET', `log-entry/${args.logEntry}/comments`).then(res => res.json()),
+    reviewComments: (root, args, context) => context.dataSources.letterboxdAPI.getReviewComments(args.logEntry),
 
     relationshipToReview: (root, args) =>
       request('GET', `log-entry/${args.logEntry}/me`, null, args.accessToken).then(res => res.json()),
@@ -240,7 +240,7 @@ const resolvers = {
 
     member: (root, args, context) => context.dataSources.letterboxdAPI.getMember(args.id),
 
-    memberStatistics: (root, args) => request('GET', `member/${args.member}/statistics`).then(res => res.json()),
+    memberStatistics: (root, args, context) => context.dataSources.letterboxdAPI.getMemberStatistics(args.member),
 
     memberLogEntryTags: (root, args) =>
       request('GET', `member/${args.member}/log-entry-tags`)
