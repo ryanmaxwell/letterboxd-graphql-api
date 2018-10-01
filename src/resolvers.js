@@ -154,32 +154,20 @@ const resolvers = {
     relationshipToFilm: (root, args) =>
       request('GET', `film/${args.film}/me`, null, args.accessToken).then(res => res.json()),
 
-    filmCollection: (root, args) => {
-      let url = `film-collection/${args.id}`;
+    filmCollection: (root, args, context) => {
+      const filmCollectionId = args.id;
+      const queryParams = args;
+      delete queryParams.id;
 
-      const queryArgs = args;
-      delete queryArgs.id;
-
-      const query = queryString.stringify(queryArgs);
-      if (query) {
-        url += `?${query}`;
-      }
-
-      return request('GET', url).then(res => res.json());
+      return context.dataSources.letterboxdAPI.getFilmCollection(filmCollectionId, queryParams);
     },
 
-    filmMembers: (root, args) => {
-      let url = `film/${args.film}/members`;
+    filmMembers: (root, args, context) => {
+      const filmId = args.film;
+      const queryParams = args;
+      delete queryParams.film;
 
-      const queryArgs = args;
-      delete queryArgs.film;
-
-      const query = queryString.stringify(queryArgs);
-      if (query) {
-        url += `?${query}`;
-      }
-
-      return request('GET', url).then(res => res.json());
+      return context.dataSources.letterboxdAPI.getFilmMembers(filmId, queryParams);
     },
 
     filmAvailability: (root, args) =>
@@ -242,49 +230,30 @@ const resolvers = {
 
     memberStatistics: (root, args, context) => context.dataSources.letterboxdAPI.getMemberStatistics(args.member),
 
-    memberLogEntryTags: (root, args) =>
-      request('GET', `member/${args.member}/log-entry-tags`)
-        .then(res => res.json())
-        .then(json => json.items),
+    memberLogEntryTags: (root, args, context) => context.dataSources.letterboxdAPI.getMemberLogEntryTags(args.member),
 
-    memberListTags: (root, args) =>
-      request('GET', `member/${args.member}/list-tags-2`)
-        .then(res => res.json())
-        .then(json => json.items),
+    memberListTags: (root, args, context) => context.dataSources.letterboxdAPI.getMemberListTags(args.member),
 
-    watchlist: (root, args) => {
-      let url = `member/${args.member}/watchlist`;
+    watchlist: (root, args, context) => {
+      const memberId = args.member;
+      const queryParams = args;
+      delete memberId.member;
 
-      const queryArgs = args;
-      delete queryArgs.member;
-
-      const query = queryString.stringify(queryArgs);
-      if (query) {
-        url += `?${query}`;
-      }
-
-      return request('GET', url).then(res => res.json());
+      return context.dataSources.letterboxdAPI.getMemberWatchlist(memberId, queryParams);
     },
 
     genres: (root, args, context) => context.dataSources.letterboxdAPI.getGenres(),
 
-    services: (root, args, context) =>
-      context.dataSources.letterboxdAPI.get('films/film-services').then(json => json.items),
+    services: (root, args, context) => context.dataSources.letterboxdAPI.getServices(),
 
     contributor: (root, args, context) => context.dataSources.letterboxdAPI.getContributor(args.id),
 
-    contributions: (root, args) => {
-      let url = `contributor/${args.contributor}/contributions`;
+    contributions: (root, args, context) => {
+      const contributorId = args.contributor;
+      const queryParams = args;
+      delete queryParams.contributor;
 
-      const queryArgs = args;
-      delete queryArgs.contributor;
-
-      const query = queryString.stringify(queryArgs);
-      if (query) {
-        url += `?${query}`;
-      }
-
-      return request('GET', url).then(res => res.json());
+      return context.dataSources.letterboxdAPI.getContributions(contributorId, queryParams);
     },
 
     search: (root, args) => {

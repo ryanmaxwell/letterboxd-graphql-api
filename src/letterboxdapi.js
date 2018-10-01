@@ -32,6 +32,14 @@ class LetterboxdAPI extends RESTDataSource {
     return this.get('films', params);
   }
 
+  async getFilmCollection(id, params) {
+    return this.get(`film-collection/${id}`, params);
+  }
+
+  async getFilmMembers(id, params) {
+    return this.get(`film/${id}/members`, params);
+  }
+
   async getList(id) {
     return this.get(`list/${id}`);
   }
@@ -72,12 +80,28 @@ class LetterboxdAPI extends RESTDataSource {
     return this.get(`member/${id}/statistics`);
   }
 
+  async getMemberWatchlist(id, params) {
+    return this.get(`member/${id}/watchlist`, params);
+  }
+
+  async getMemberListTags(id) {
+    return this.get(`member/${id}/list-tags-2`);
+  }
+
+  async getMemberLogEntryTags(id) {
+    return this.get(`member/${id}/log-entry-tags`);
+  }
+
   async getMembers(params) {
     return this.get('members', params);
   }
 
   async getContributor(id) {
     return this.get(`contributor/${id}`);
+  }
+
+  async getContributions(id, params) {
+    return this.get(`contributor/${id}/contributions`, params);
   }
 
   async getGenres() {
