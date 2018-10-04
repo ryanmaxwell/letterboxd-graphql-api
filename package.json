@@ -11,18 +11,18 @@
   "license": "ISC",
   "dependencies": {
     "apollo-datasource-rest": "^0.1.5",
-    "apollo-server": "^2.0.0",
+    "apollo-server": "^2.1.0",
     "crypto": "^1.0.1",
     "dataloader": "^1.4.0",
     "graphql": "^0.13.2",
     "node-fetch": "^2.2.0",
-    "query-string": "^6.1.0",
+    "query-string": "^6.2.0",
     "uuid-random": "^1.0.6"
   },
   "devDependencies": {
-    "eslint": "^5.4.0",
+    "eslint": "^5.6.1",
     "eslint-config-airbnb-base": "^13.1.0",
-    "eslint-config-prettier": "^3.0.1",
+    "eslint-config-prettier": "^3.1.0",
     "eslint-plugin-import": "^2.14.0"
   }
 }
