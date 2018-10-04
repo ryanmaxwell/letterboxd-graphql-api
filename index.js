@@ -26,6 +26,9 @@ const server = new ApolloServer({
   schema,
   fieldResolver,
   dataSources: () => ({ letterboxdAPI: new LetterboxdAPI() }),
+  context: ({ req }) => ({
+    authHeader: req.headers.authorization,
+  }),
 });
 
 server.listen().then(({ url }) => {

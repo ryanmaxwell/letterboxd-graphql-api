@@ -72,6 +72,10 @@ class LetterboxdAPI extends RESTDataSource {
     return this.get('log-entries', params);
   }
 
+  async getMe(authHeader) {
+    return this.get(`me`, null, { headers: { Authorization: authHeader } });
+  }
+
   async getMember(id) {
     return this.get(`member/${id}`);
   }

@@ -222,7 +222,7 @@ const resolvers = {
         .then(json => json.result);
     },
 
-    me: (root, args) => request('GET', 'me', null, args.accessToken).then(res => res.json()),
+    me: (root, args, context) => context.dataSources.letterboxdAPI.getMe(context.authHeader),
 
     members: (root, args, context) => context.dataSources.letterboxdAPI.getMembers(args),
 

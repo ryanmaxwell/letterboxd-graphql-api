@@ -1,7 +1,7 @@
 # Queries
 
 extend type Query {
-  me(accessToken: String!): MemberAccount
+  me: MemberAccount
 
   members(
     member: ID
