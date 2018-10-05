@@ -1,68 +1,3 @@
-const fetch = require('node-fetch');
-const crypto = require('crypto');
-const uuid = require('uuid-random');
-const queryString = require('query-string');
-
-const { LETTERBOXD_API_KEY, LETTERBOXD_API_SECRET } = process.env;
-
-const env = process.env.NODE_ENV || 'dev';
-
-// for reverse-proxy debugging during development
-if (env === 'dev') {
-  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-}
-
-// base URL including version, excluding trailing slash
-const API_BASE_URL = 'https://api.letterboxd.com/api/v0';
-
-// Requests
-
-const buildUrl = (method, path, body) => {
-  const d = new Date();
-  const seconds = Math.round(d.getTime() / 1000);
-
-  let url = `${API_BASE_URL}/${path}`;
-
-  if (!url.includes('?')) {
-    url += '?';
-  } else {
-    url += '&';
-  }
-
-  url += `apikey=${LETTERBOXD_API_KEY}&nonce=${uuid()}&timestamp=${seconds}`;
-
-  let saltedString = `${method}\u0000${url}\u0000`;
-
-  if (body) {
-    saltedString += body;
-  }
-
-  const signature = crypto
-    .createHmac('sha256', LETTERBOXD_API_SECRET)
-    .update(saltedString)
-    .digest('hex');
-
-  url += `&signature=${signature}`;
-
-  return url;
-};
-
-const formRequest = async (method, path, body) => {
-  const url = buildUrl(method, path, body);
-
-  const headers = {
-    Accept: 'application/json',
-    'Accept-Encoding': 'gzip',
-    'Content-Type': 'application/x-www-form-urlencoded',
-  };
-
-  return fetch(url, {
-    method,
-    headers,
-    body,
-  });
-};
-
 // Utility
 
 const fieldResolver = (source, args, context, info) => {
@@ -172,17 +107,7 @@ const resolvers = {
     relationshipToReview: (root, args, context) =>
       context.dataSources.letterboxdAPI.getRelationshipToReview(args.logEntry, context.authHeader),
 
-    generateToken: (root, args) => {
-      const params = {
-        username: args.username,
-        password: args.password,
-        grant_type: 'password',
-      };
-
-      const body = queryString.stringify(params);
-
-      return formRequest('POST', 'auth/token', body).then(res => res.json());
-    },
+    generateToken: (root, args, context) => context.dataSources.letterboxdAPI.getToken(args),
 
     me: (root, args, context) => context.dataSources.letterboxdAPI.getMe(context.authHeader),
 

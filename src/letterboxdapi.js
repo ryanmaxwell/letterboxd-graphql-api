@@ -6,6 +6,11 @@ const queryString = require('query-string');
 const { LETTERBOXD_API_KEY, LETTERBOXD_API_SECRET } = process.env;
 const env = process.env.NODE_ENV || 'dev';
 
+// for reverse-proxy debugging during development
+if (env === 'dev') {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
+
 // base URL including version, excluding trailing slash
 const API_BASE_URL = 'https://api.letterboxd.com/api/v0';
 
@@ -136,6 +141,18 @@ class LetterboxdAPI extends RESTDataSource {
 
   async getSearchItems(params) {
     return this.get('search', params).then(json => json.items);
+  }
+
+  async getToken(params) {
+    const bodyParams = {
+      username: params.username,
+      password: params.password,
+      grant_type: 'password',
+    };
+
+    const body = queryString.stringify(bodyParams);
+
+    return this.post('auth/token', body, { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } });
   }
 
   cacheKeyFor(request) {
