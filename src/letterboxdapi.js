@@ -28,6 +28,16 @@ class LetterboxdAPI extends RESTDataSource {
     return this.get(`film/${id}/statistics`);
   }
 
+  async getFilmAvailability(id, authHeader) {
+    return this.get(`film/${id}/availability`, null, { headers: { Authorization: authHeader } }).then(
+      json => json.items
+    );
+  }
+
+  async getRelationshipToFilm(id, authHeader) {
+    return this.get(`film/${id}/me`, null, { headers: { Authorization: authHeader } });
+  }
+
   async getFilms(params) {
     return this.get('films', params);
   }
@@ -48,6 +58,10 @@ class LetterboxdAPI extends RESTDataSource {
     return this.get(`list/${id}/statistics`);
   }
 
+  async getRelationshipToList(id, authHeader) {
+    return this.get(`list/${id}/me`, null, { headers: { Authorization: authHeader } });
+  }
+
   async getListComments(id) {
     return this.get(`list/${id}/comments`);
   }
@@ -62,6 +76,10 @@ class LetterboxdAPI extends RESTDataSource {
 
   async getReviewStatistics(id) {
     return this.get(`log-entry/${id}/statistics`);
+  }
+
+  async getRelationshipToReview(id, authHeader) {
+    return this.get(`log-entry/${id}/me`, null, { headers: { Authorization: authHeader } });
   }
 
   async getReviewComments(id) {
@@ -114,6 +132,10 @@ class LetterboxdAPI extends RESTDataSource {
 
   async getServices() {
     return this.get('films/film-services').then(json => json.items);
+  }
+
+  async getSearchItems(params) {
+    return this.get('search', params).then(json => json.items);
   }
 
   cacheKeyFor(request) {

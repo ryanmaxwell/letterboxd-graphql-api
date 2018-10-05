@@ -151,8 +151,8 @@ const resolvers = {
 
     filmStatistics: (root, args, context) => context.dataSources.letterboxdAPI.getFilmStatistics(args.film),
 
-    relationshipToFilm: (root, args) =>
-      request('GET', `film/${args.film}/me`, null, args.accessToken).then(res => res.json()),
+    relationshipToFilm: (root, args, context) =>
+      context.dataSources.letterboxdAPI.getRelationshipToFilm(args.film, context.authHeader),
 
     filmCollection: (root, args, context) => {
       const filmCollectionId = args.id;
@@ -170,10 +170,8 @@ const resolvers = {
       return context.dataSources.letterboxdAPI.getFilmMembers(filmId, queryParams);
     },
 
-    filmAvailability: (root, args) =>
-      request('GET', `film/${args.film}/availability`, null, args.accessToken)
-        .then(res => res.json())
-        .then(json => json.items),
+    filmAvailability: (root, args, context) =>
+      context.dataSources.letterboxdAPI.getRelationshipToFilm(args.film, context.authHeader),
 
     lists: (root, args, context) => context.dataSources.letterboxdAPI.getLists(args),
 
@@ -183,8 +181,8 @@ const resolvers = {
 
     listComments: (root, args, context) => context.dataSources.letterboxdAPI.getListComments(args.list),
 
-    relationshipToList: (root, args) =>
-      request('GET', `list/${args.list}/me`, null, args.accessToken).then(res => res.json()),
+    relationshipToList: (root, args, context) =>
+      context.dataSources.letterboxdAPI.getRelationshipToList(args.list, context.authHeader),
 
     logEntries: (root, args, context) => context.dataSources.letterboxdAPI.getLogEntries(args),
 
@@ -194,8 +192,8 @@ const resolvers = {
 
     reviewComments: (root, args, context) => context.dataSources.letterboxdAPI.getReviewComments(args.logEntry),
 
-    relationshipToReview: (root, args) =>
-      request('GET', `log-entry/${args.logEntry}/me`, null, args.accessToken).then(res => res.json()),
+    relationshipToReview: (root, args, context) =>
+      context.dataSources.letterboxdAPI.getRelationshipToReview(args.logEntry, context.authHeader),
 
     generateToken: (root, args) => {
       const params = {
@@ -256,16 +254,7 @@ const resolvers = {
       return context.dataSources.letterboxdAPI.getContributions(contributorId, queryParams);
     },
 
-    search: (root, args) => {
-      let url = 'search';
-
-      const query = queryString.stringify(args);
-      if (query) {
-        url += `?${query}`;
-      }
-
-      return request('GET', url).then(res => res.json());
-    },
+    search: (root, args, context) => context.dataSources.letterboxdAPI.getSearchItems(args),
   },
 
   SearchItem: {
@@ -320,11 +309,9 @@ const resolvers = {
   },
   List: {
     hasEntriesWithNotes: fetchFromDetailIfListSummary,
-    tags: list => {
+    tags: (list, args, context) => {
       if (isListSummary(list)) {
-        return request('GET', `list/${list.id}`)
-          .then(res => res.json())
-          .then(json => json.tags2);
+        return context.letterboxdAPI.getList(list.id).then(json => json.tags2);
       }
       return list.tags2;
     },
