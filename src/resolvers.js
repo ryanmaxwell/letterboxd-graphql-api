@@ -47,29 +47,6 @@ const buildUrl = (method, path, body) => {
   return url;
 };
 
-const request = async (method, path, body, accessToken) => {
-  const url = buildUrl(method, path, body);
-
-  const headers = {
-    Accept: 'application/json',
-    'Accept-Encoding': 'gzip',
-  };
-
-  if (body) {
-    headers['Content-Type'] = 'application/json';
-  }
-
-  if (accessToken) {
-    headers.Authorization = `Bearer ${accessToken}`;
-  }
-
-  return fetch(url, {
-    method,
-    headers,
-    body,
-  });
-};
-
 const formRequest = async (method, path, body) => {
   const url = buildUrl(method, path, body);
 
@@ -205,19 +182,6 @@ const resolvers = {
       const body = queryString.stringify(params);
 
       return formRequest('POST', 'auth/token', body).then(res => res.json());
-    },
-
-    usernameCheck: (root, args) => {
-      let url = 'auth/username-check';
-
-      const query = queryString.stringify(args);
-      if (query) {
-        url += `?${query}`;
-      }
-
-      return request('GET', url)
-        .then(res => res.json())
-        .then(json => json.result);
     },
 
     me: (root, args, context) => context.dataSources.letterboxdAPI.getMe(context.authHeader),

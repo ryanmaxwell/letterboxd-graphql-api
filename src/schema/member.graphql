@@ -52,14 +52,6 @@ type AccessToken {
   expires_in: Int!
 }
 
-enum UsernameCheckResult {
-  Available
-  NotAvailable
-  TooShort
-  TooLong
-  Invalid
-}
-
 type MemberAccount {
   emailAddress: String!
   emailAddressValidated: Boolean!

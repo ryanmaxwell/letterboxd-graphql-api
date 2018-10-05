@@ -3,6 +3,4 @@
 type Query {
   # Auth
   generateToken(username: String!, password: String!): AccessToken
-
-  usernameCheck(username: String!): UsernameCheckResult
 }
