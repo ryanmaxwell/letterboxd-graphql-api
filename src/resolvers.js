@@ -1,61 +1,14 @@
-// Utility
+const { merge } = require('lodash');
 
-const fieldResolver = (source, args, context, info) => {
-  // ensure source is a value for which property access is acceptable.
-  if (typeof source === 'object' || typeof source === 'function') {
-    // default resolver behaviour first
-    const property = source[info.fieldName];
-    if (typeof property === 'function') {
-      return source[info.fieldName](args, context, info);
-    }
-    if (typeof property !== 'undefined') {
-      return property;
-    }
-  }
-  // unresolved
-  return undefined;
-};
+const { resolvers: commentResolvers } = require('./types/comment/comment.js');
+const { resolvers: contributorResolvers } = require('./types/contributor/contributor.js');
+const { resolvers: filmResolvers } = require('./types/film/film.js');
+const { resolvers: logEntryResolvers } = require('./types/logEntry/logEntry.js');
+const { resolvers: listResolvers } = require('./types/list/list.js');
+const { resolvers: memberResolvers } = require('./types/member/member.js');
+const { resolvers: searchResolvers } = require('./types/search/search.js');
 
-const isFilmSummary = film => film.trailer === undefined;
-const isListSummary = list => list.links === undefined;
-const isMemberSummary = member => member.links === undefined;
-const isContributorSummary = contributor => contributor.links === undefined;
-
-const fetchFromDetailIfFilmSummary = async (film, args, context, info) => {
-  if (isFilmSummary(film)) {
-    return context.dataSources.letterboxdAPI.getFilm(film.id).then(json => fieldResolver(json, args, context, info));
-  }
-  return fieldResolver(film, args, context, info);
-};
-
-const fetchFromDetailIfListSummary = async (list, args, context, info) => {
-  if (isListSummary(list)) {
-    return context.dataSources.letterboxdAPI.getList(list.id).then(json => fieldResolver(json, args, context, info));
-  }
-  return fieldResolver(list, args, context, info);
-};
-
-const fetchFromDetailIfMemberSummary = async (member, args, context, info) => {
-  if (isMemberSummary(member)) {
-    return context.dataSources.letterboxdAPI
-      .getMember(member.id)
-      .then(json => fieldResolver(json, args, context, info));
-  }
-  return fieldResolver(member, args, context, info);
-};
-
-const fetchFromDetailIfContributorSummary = async (contributor, args, context, info) => {
-  if (isContributorSummary(contributor)) {
-    return context.dataSources.letterboxdAPI
-      .getContributor(contributor.id)
-      .then(json => fieldResolver(json, args, context, info));
-  }
-  return fieldResolver(contributor, args, context, info);
-};
-
-// Resolvers
-
-const resolvers = {
+const queryResolvers = {
   Query: {
     films: (root, args, context) => context.dataSources.letterboxdAPI.getFilms(args),
 
@@ -145,81 +98,17 @@ const resolvers = {
 
     search: (root, args, context) => context.dataSources.letterboxdAPI.getSearchItems(args),
   },
-
-  SearchItem: {
-    __resolveType(searchItem) {
-      return searchItem.type;
-    },
-  },
-  Comment: {
-    __resolveType(comment) {
-      return comment.type;
-    },
-  },
-  LogEntry: {
-    tags: logEntry => logEntry.tags2,
-  },
-  Film: {
-    alternativeNames: film => (film.alternativeNames === undefined ? [] : film.alternativeNames),
-    backdropFocalPoint: fetchFromDetailIfFilmSummary,
-    contributions: (film, args, context, info) => {
-      const result = fetchFromDetailIfFilmSummary(film, args, context, info);
-      if (args.type) {
-        return result.then(contributions => contributions.filter(contribution => contribution.type === args.type));
-      }
-      return result;
-    },
-    description: fetchFromDetailIfFilmSummary,
-    tagline: fetchFromDetailIfFilmSummary,
-    genres: fetchFromDetailIfFilmSummary,
-    trailer: fetchFromDetailIfFilmSummary,
-    backdrop: fetchFromDetailIfFilmSummary,
-    directors: film => {
-      if (isFilmSummary(film)) {
-        return film.directors;
-      }
-      const directorContributions = film.contributions.find(contribution => contribution.type === 'Director');
-      if (directorContributions) {
-        return directorContributions.contributors;
-      }
-      return [];
-    },
-  },
-  Member: {
-    backdrop: fetchFromDetailIfMemberSummary,
-    bio: fetchFromDetailIfMemberSummary,
-    bioLbml: fetchFromDetailIfMemberSummary,
-    location: fetchFromDetailIfMemberSummary,
-    website: fetchFromDetailIfMemberSummary,
-    twitterUsername: fetchFromDetailIfMemberSummary,
-    favoriteFilms: fetchFromDetailIfMemberSummary,
-    pinnedReviews: fetchFromDetailIfMemberSummary,
-    links: fetchFromDetailIfMemberSummary,
-  },
-  List: {
-    hasEntriesWithNotes: fetchFromDetailIfListSummary,
-    tags: (list, args, context) => {
-      if (isListSummary(list)) {
-        return context.letterboxdAPI.getList(list.id).then(json => json.tags2);
-      }
-      return list.tags2;
-    },
-    links: fetchFromDetailIfListSummary,
-    canShareOn: fetchFromDetailIfListSummary,
-    sharedOn: fetchFromDetailIfListSummary,
-    whenCreated: fetchFromDetailIfListSummary,
-    whenPublished: fetchFromDetailIfListSummary,
-  },
-  Contributor: {
-    characterName: contributor => {
-      if (isContributorSummary(contributor)) {
-        return contributor.characterName;
-      }
-      return null;
-    },
-    statistics: fetchFromDetailIfContributorSummary,
-    links: fetchFromDetailIfContributorSummary,
-  },
 };
 
-module.exports = { resolvers, fieldResolver };
+const resolvers = merge(
+  queryResolvers,
+  commentResolvers,
+  contributorResolvers,
+  filmResolvers,
+  logEntryResolvers,
+  listResolvers,
+  memberResolvers,
+  searchResolvers
+);
+
+module.exports = { resolvers };
