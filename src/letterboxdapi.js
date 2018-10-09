@@ -140,7 +140,7 @@ class LetterboxdAPI extends RESTDataSource {
   }
 
   async getSearchItems(params) {
-    return this.get('search', params).then(json => json.items);
+    return this.get('search', params);
   }
 
   async getToken(params) {
